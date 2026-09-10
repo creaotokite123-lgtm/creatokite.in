@@ -1,25 +1,9 @@
 const { Resend } = require('resend');
-const nodemailer = require('nodemailer');
 
 const getResendClient = () => {
   const key = (process.env.RESEND_API_KEY || '').trim();
   if (key) {
     return new Resend(key);
-  }
-  return null;
-};
-
-const getTransporter = () => {
-  const emailUser = (process.env.EMAIL_USER || '').trim();
-  const emailPass = (process.env.EMAIL_PASS || '').trim();
-  if (emailUser && emailPass) {
-    return nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
-      auth: { user: emailUser, pass: emailPass },
-      tls: { rejectUnauthorized: false }
-    });
   }
   return null;
 };
@@ -30,7 +14,6 @@ const send = async (to, subject, html) => {
   const resendClient = getResendClient();
   const fromResend   = (process.env.RESEND_FROM_EMAIL || '').trim() || 'CreatoKite <onboarding@resend.dev>';
   
-  // Option A: Send via Resend API
   if (resendClient) {
     try {
       const response = await resendClient.emails.send({
@@ -41,35 +24,17 @@ const send = async (to, subject, html) => {
       });
       if (response.error) {
         console.error('❌ [Resend Error]:', response.error.message || response.error);
-      } else {
-        console.log(`✅ [Resend Email SENT] ${subject} → ${to} (ID: ${response.data?.id || response.id})`);
-        return true;
+        return false;
       }
-    } catch (e) {
-      console.error('❌ [Resend Exception Error]:', e.message);
-    }
-  }
-
-  // Option B: Send via Nodemailer SMTP
-  const transporter = getTransporter();
-  const fromSmtp = `"CreatoKite" <${(process.env.EMAIL_USER || 'creaotokite123@gmail.com').trim()}>`;
-  if (transporter) {
-    try {
-      const info = await transporter.sendMail({
-        from: fromSmtp,
-        to,
-        subject,
-        html
-      });
-      console.log(`✅ [Nodemailer Email SENT] ${subject} → ${to} (MessageID: ${info.messageId})`);
+      console.log(`✅ [Resend Email SENT] ${subject} → ${to} (ID: ${response.data?.id || response.id})`);
       return true;
     } catch (e) {
-      console.error('❌ [Nodemailer Error]:', e.message);
+      console.error('❌ [Resend Exception Error]:', e.message);
       return false;
     }
   }
 
-  // Option C: Log in local dev mode when no API keys are provided
+  // Fallback: Log in local dev mode when RESEND_API_KEY is not provided
   console.log(`\n==================================================`);
   console.log(`⚠️ [EMAIL LOG - LOCAL DEV MODE]`);
   console.log(`Subject: ${subject}`);

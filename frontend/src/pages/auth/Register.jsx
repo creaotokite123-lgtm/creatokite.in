@@ -378,7 +378,10 @@ export default function Register() {
       toast.success(`Welcome to CreatoKite, ${user.displayName}! 🚀`);
       navigate(getDashboardPath(user.role), { replace: true });
     } catch (err) {
-      const errMsg = err.response?.data?.message || err.response?.data?.errors?.[0]?.msg || err.message || 'Registration failed';
+      let errMsg = err.response?.data?.message || err.response?.data?.errors?.[0]?.msg || err.message || 'Registration failed';
+      if (typeof errMsg === 'string' && (errMsg.includes('ECONNRESET') || errMsg.includes('ECONNREFUSED') || errMsg.includes('ETIMEDOUT') || errMsg.includes('Network Error'))) {
+        errMsg = 'Connection reset or network interruption. Please try again.';
+      }
       toast.error(errMsg);
     } finally {
       setLoading(false);

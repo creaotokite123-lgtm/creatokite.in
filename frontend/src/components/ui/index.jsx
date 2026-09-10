@@ -669,7 +669,32 @@ export function renderTextWithLinks(text, options = {}) {
         </a>
       );
     }
-    return part;
+
+    // Process markdown formatting: *bold* and _italic_
+    const mdRegex = /(\*[^*]+\*|_[^_]+_)/g;
+    const subparts = part.split(mdRegex);
+
+    return (
+      <span key={idx}>
+        {subparts.map((sub, sIdx) => {
+          if (sub.startsWith('*') && sub.endsWith('*') && sub.length > 2) {
+            return (
+              <strong key={sIdx} style={{ color: 'var(--t1, #F0EDE6)', fontWeight: 700 }}>
+                {sub.slice(1, -1)}
+              </strong>
+            );
+          }
+          if (sub.startsWith('_') && sub.endsWith('_') && sub.length > 2) {
+            return (
+              <em key={sIdx} style={{ fontStyle: 'italic', color: 'var(--t2, #8892A4)' }}>
+                {sub.slice(1, -1)}
+              </em>
+            );
+          }
+          return sub;
+        })}
+      </span>
+    );
   });
 }
 

@@ -477,36 +477,126 @@ export default function Activities() {
       {/* Submission Modal */}
       {showModal && selectedAct && createPortal(
         <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)',
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 99999, padding: 16, backdropFilter: 'blur(6px)',
+          zIndex: 99999, padding: 16, backdropFilter: 'blur(8px)',
           overflowY: 'auto'
         }}>
-          <div className="glass-modal" style={{ width: '100%', maxWidth: 480, animation: 'fadeUp 0.15s', padding: 24, borderRadius: 20, margin: 'auto', background: 'var(--s1)' }}>
-            <div className="flex-between" style={{ marginBottom: 16, borderBottom: '1px solid var(--border)', paddingBottom: 12 }}>
-              <h3 style={{ fontSize: 16, fontWeight: 800, fontFamily: 'var(--fh)' }}>Submit {selectedAct.title}</h3>
-              <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--t3)', fontSize: 22, padding: 0 }}>×</button>
+          <div className="glass-modal" style={{
+            width: '100%', maxWidth: 540, animation: 'fadeUp 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+            padding: '24px 28px', borderRadius: 24, margin: 'auto',
+            background: 'var(--s1, #12141C)', border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 24px 60px rgba(0,0,0,0.6)'
+          }}>
+            {/* Modal Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18, borderBottom: '1px solid var(--border)', paddingBottom: 16 }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+                  <span style={{
+                    textTransform: 'uppercase', fontSize: 10, fontWeight: 700,
+                    padding: '3px 10px', borderRadius: 99,
+                    background: 'rgba(230,95,43,0.12)', color: 'var(--acc)',
+                    border: '1px solid rgba(230,95,43,0.25)', letterSpacing: '0.04em'
+                  }}>{selectedAct.type || 'Activity'}</span>
+                  
+                  {selectedAct.xpReward > 0 && (
+                    <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--t1)', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', padding: '2px 8px', borderRadius: 99 }}>
+                      ⚡ {selectedAct.xpReward} XP
+                    </span>
+                  )}
+                  {selectedAct.coinReward > 0 && (
+                    <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--gold, #D4A24C)', background: 'rgba(212,162,76,0.1)', border: '1px solid rgba(212,162,76,0.25)', padding: '2px 8px', borderRadius: 99 }}>
+                      🪙 {selectedAct.coinReward} Coins
+                    </span>
+                  )}
+                </div>
+                <h3 style={{ fontSize: 18, fontWeight: 800, fontFamily: 'var(--fh)', color: 'var(--t1)', margin: 0, lineHeight: 1.3 }}>
+                  Submit Activity: {selectedAct.title}
+                </h3>
+              </div>
+
+              <button
+                onClick={() => setShowModal(false)}
+                style={{
+                  background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)',
+                  color: 'var(--t3)', fontSize: 20, width: 32, height: 32, borderRadius: 10,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', transition: 'all 0.2s', flexShrink: 0
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+              >
+                ×
+              </button>
             </div>
 
-            <form onSubmit={submitActivity} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <p style={{ fontSize: 12, color: 'var(--t2)', lineHeight: 1.5, fontWeight: 500 }}>
-                {decodeHTML(selectedAct.description)}
-              </p>
-
-              <div className="form-group">
-                <label className="form-label" style={{ fontWeight: 600, fontSize: 12, marginBottom: 6, display: 'block' }}>Submission URL (e.g. Instagram Reel, Drive Link)</label>
-                <input className="form-input" placeholder="https://instagram.com/reel/..." value={url} onChange={e => setUrl(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--s1)', color: 'var(--t1)' }} />
+            <form onSubmit={submitActivity} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {/* Guidelines & Requirements Section */}
+              <div style={{
+                background: 'rgba(255,255,255,0.02)',
+                border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: 16, padding: '14px 16px'
+              }}>
+                <div style={{
+                  fontSize: 11, fontWeight: 700, color: 'var(--t3)',
+                  textTransform: 'uppercase', letterSpacing: '0.06em',
+                  marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6
+                }}>
+                  <AlertCircle size={13} color="var(--acc)" />
+                  Requirements & Guidelines
+                </div>
+                <FormattedBulletDescription text={selectedAct.description} isCompact={false} />
               </div>
 
+              {/* Submission URL Field */}
               <div className="form-group">
-                <label className="form-label" style={{ fontWeight: 600, fontSize: 12, marginBottom: 6, display: 'block' }}>Submission Note / Answers</label>
-                <textarea className="form-input form-textarea" value={note} onChange={e => setNote(e.target.value)} placeholder="Explain your work, or answer the prompts here..." style={{ minHeight: 90, width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--s1)', color: 'var(--t1)' }} />
+                <label className="form-label" style={{ fontWeight: 700, fontSize: 12.5, marginBottom: 6, color: 'var(--t1)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  🔗 Submission Link (e.g. Instagram Reel, Drive Link, TikTok)
+                </label>
+                <input
+                  className="form-input"
+                  placeholder="https://instagram.com/reel/... or https://drive.google.com/..."
+                  value={url}
+                  onChange={e => setUrl(e.target.value)}
+                  style={{
+                    width: '100%', padding: '11px 14px', borderRadius: 12,
+                    border: '1px solid var(--border)', background: 'rgba(0,0,0,0.2)',
+                    color: 'var(--t1)', fontSize: 13, transition: 'border-color 0.2s',
+                    outline: 'none'
+                  }}
+                  onFocus={e => e.target.style.borderColor = 'var(--acc)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'}
+                />
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 10 }}>
-                <Btn variant="secondary" type="button" onClick={() => setShowModal(false)} style={{ height: 34, borderRadius: 8, padding: '0 16px' }}>Cancel</Btn>
-                <Btn variant="primary" type="submit" disabled={submitting} style={{ height: 34, borderRadius: 8, padding: '0 16px' }}>
-                  {submitting ? 'Submitting...' : 'Submit Draft'}
+              {/* Submission Note Field */}
+              <div className="form-group">
+                <label className="form-label" style={{ fontWeight: 700, fontSize: 12.5, marginBottom: 6, color: 'var(--t1)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  📝 Submission Details / Notes
+                </label>
+                <textarea
+                  className="form-input form-textarea"
+                  value={note}
+                  onChange={e => setNote(e.target.value)}
+                  placeholder="Include mandatory details (e.g., Phone Number, Email, Address, or submission notes)..."
+                  style={{
+                    minHeight: 100, width: '100%', padding: '12px 14px', borderRadius: 12,
+                    border: '1px solid var(--border)', background: 'rgba(0,0,0,0.2)',
+                    color: 'var(--t1)', fontSize: 13, lineHeight: 1.5,
+                    resize: 'vertical', outline: 'none'
+                  }}
+                  onFocus={e => e.target.style.borderColor = 'var(--acc)'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'}
+                />
+              </div>
+
+              {/* Footer Actions */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 12, marginTop: 6, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+                <Btn variant="secondary" type="button" onClick={() => setShowModal(false)} style={{ height: 38, borderRadius: 10, padding: '0 20px', fontWeight: 600 }}>
+                  Cancel
+                </Btn>
+                <Btn variant="primary" type="submit" disabled={submitting} style={{ height: 38, borderRadius: 10, padding: '0 22px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {submitting ? 'Submitting Work...' : '🚀 Submit Deliverable'}
                 </Btn>
               </div>
             </form>

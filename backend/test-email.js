@@ -1,34 +1,26 @@
 require('dotenv').config();
-const nodemailer = require('nodemailer');
+const { sendVerificationMail } = require('./src/utils/sendEmail');
 
-console.log('--- Testing SMTP configuration ---');
-console.log('EMAIL_USER:', process.env.EMAIL_USER);
-console.log('EMAIL_PASS length:', process.env.EMAIL_PASS ? process.env.EMAIL_PASS.length : 0);
+console.log('--- Testing Resend API Configuration ---');
+console.log('RESEND_API_KEY:', process.env.RESEND_API_KEY ? `${process.env.RESEND_API_KEY.slice(0, 10)}...` : 'NOT SET');
+console.log('RESEND_FROM_EMAIL:', process.env.RESEND_FROM_EMAIL || 'CreatoKite <onboarding@resend.dev>');
 
-if (!process.env.EMAIL_PASS) {
-  console.error('❌ EMAIL_PASS is empty. Make sure you set it in your backend/.env and restarted your server.');
+if (!process.env.RESEND_API_KEY) {
+  console.error('❌ RESEND_API_KEY is empty. Please set it in backend/.env');
   process.exit(1);
 }
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER || 'creatokite123@gmail.com',
-    pass: process.env.EMAIL_PASS
-  }
-});
+const recipient = process.argv[2] || 'test@example.com';
+console.log(`\nAttempting to send test email to: ${recipient}...`);
 
-const mailOptions = {
-  from: `"CreatoKite Test" <${process.env.EMAIL_USER || 'creatokite123@gmail.com'}>`,
-  to: process.env.EMAIL_USER || 'creatokite123@gmail.com',
-  subject: 'SMTP Diagnostics Test',
-  text: 'If you receive this, your SMTP and passcode credentials are correct!'
-};
-
-transporter.sendMail(mailOptions, (error, info) => {
-  if (error) {
-    console.error('\n❌ SMTP send failed with error:\n', error);
-  } else {
-    console.log('\n✅ SMTP test succeeded! Message ID:', info.messageId);
-  }
-});
+sendVerificationMail(recipient, 'Test User', 'demo-token-123')
+  .then((success) => {
+    if (success) {
+      console.log('\n✅ Resend test finished successfully!');
+    } else {
+      console.error('\n❌ Resend test failed. Check the error log above.');
+    }
+  })
+  .catch((err) => {
+    console.error('\n❌ Resend test exception:', err);
+  });
