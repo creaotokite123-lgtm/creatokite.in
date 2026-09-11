@@ -1,12 +1,20 @@
-import axios from 'axios';
+const getBaseUrl = () => {
+  let raw = (import.meta.env.VITE_API_URL || '').trim();
+  if (!raw) return '/api';
+  raw = raw.replace(/\/+$/, ''); // Remove trailing slashes
+  if (!raw.endsWith('/api')) {
+    raw = `${raw}/api`;
+  }
+  return raw;
+};
 
-const BASE = import.meta.env.VITE_API_URL || '/api';
+const BASE = getBaseUrl();
 
 const api = axios.create({
   baseURL: BASE,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
-  timeout: 20000,
+  timeout: 30000,
 });
 
 api.interceptors.request.use(cfg => {

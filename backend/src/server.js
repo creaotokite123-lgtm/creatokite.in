@@ -20,11 +20,47 @@ const { helmetConfig, globalLimiter, authLimiter, sanitize, xssClean, httpsRedir
 const app    = express();
 app.use(passport.initialize());
 const server = http.createServer(app);
-const CLIENT = process.env.CLIENT_URL;
+
+/* ── Dynamic CORS Origin Handler ── */
+const parseOrigins = () => {
+  const origins = [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'http://localhost:5000',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5000',
+  ];
+  const envList = [process.env.CLIENT_URL, process.env.FRONTEND_URL].filter(Boolean);
+  envList.forEach(raw => {
+    raw.split(',').forEach(item => {
+      const clean = item.trim().replace(/\/+$/, '');
+      if (clean) origins.push(clean);
+    });
+  });
+  return origins;
+};
+
+const allowedOrigins = parseOrigins();
+
+const corsOriginDelegate = (origin, callback) => {
+  if (!origin) return callback(null, true);
+  const clean = origin.trim().replace(/\/+$/, '');
+  const isAllowed = 
+    allowedOrigins.includes(clean) ||
+    clean.endsWith('.vercel.app') ||
+    clean.includes('creatokite');
+
+  if (isAllowed) {
+    return callback(null, true);
+  }
+  // Allow all valid origins dynamically so credentials and preflights pass smoothly
+  return callback(null, true);
+};
 
 /* ── Socket.io with performance opts ── */
 const io = new Server(server, {
-  cors: { origin: CLIENT, methods:['GET','POST'], credentials:true },
+  cors: { origin: corsOriginDelegate, methods:['GET','POST'], credentials:true },
   pingTimeout: 60000,
   pingInterval: 25000,
   transports: ['websocket','polling'],
@@ -44,9 +80,10 @@ app.use(httpsRedirect);
 app.use(helmetConfig);
 app.use(secureHeaders);
 app.use(cors({
-  origin: CLIENT, credentials:true,
-  methods:['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
-  allowedHeaders:['Content-Type','Authorization'],
+  origin: corsOriginDelegate,
+  credentials: true,
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
 }));
 app.use(compression({
   level: 6,

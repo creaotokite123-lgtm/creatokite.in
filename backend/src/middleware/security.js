@@ -11,7 +11,7 @@ const helmetConfig = helmet({
       styleSrc:    ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
       fontSrc:     ["'self'", 'https://fonts.gstatic.com'],
       imgSrc:      ["'self'", 'data:', 'https:', 'blob:'],
-      connectSrc:  ["'self'", process.env.CLIENT_URL || 'http://localhost:5173'],
+      connectSrc:  ["'self'", 'https:', 'http:', 'wss:', 'ws:', '*'],
       frameSrc:    ["'none'"],
       objectSrc:   ["'none'"],
       upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
