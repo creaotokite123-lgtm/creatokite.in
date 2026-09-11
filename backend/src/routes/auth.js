@@ -2,11 +2,11 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const passport = require("passport");
 const { body, validationResult } = require('express-validator');
-const { User, Campaign, Notification } = require('../models');
+const { User, Campaign, Notification, Otp } = require('../models');
 const { auth, setAuthCookies, clearAuthCookies } = require('../middleware/auth');
 const { computeScore, getRank, computeCAS } = require('../services/scoring');
 const { fetchSocialData } = require('../services/socialFetcher');
-const { sendLoginMail, sendResetPasswordMail, sendVerificationMail } = require("../utils/sendEmail");
+const { sendLoginMail, sendResetPasswordMail, sendVerificationMail, sendSignupOtpMail } = require("../utils/sendEmail");
 const crypto = require('crypto');
 
 const router = express.Router();
@@ -179,6 +179,112 @@ router.post('/validate-instagram', async (req, res) => {
   }
 });
 
+/* ── POST /api/auth/send-signup-otp ──────────────────────── */
+router.post('/send-signup-otp', [
+  body('email').trim().isEmail().withMessage('Please enter a valid email address').normalizeEmail(),
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, message: 'Valid email address is required.' });
+    }
+
+    const { email } = req.body;
+
+    // Check if user already registered
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ success: false, message: 'An account with this email address already exists. Please login instead.' });
+    }
+
+    // Rate Limiting: check if an OTP was requested < 60 seconds ago for this email
+    const existingOtp = await Otp.findOne({ email, purpose: 'signup' }).sort({ createdAt: -1 });
+    if (existingOtp && (Date.now() - new Date(existingOtp.lastSentAt).getTime() < 60000)) {
+      const waitSeconds = Math.ceil((60000 - (Date.now() - new Date(existingOtp.lastSentAt).getTime())) / 1000);
+      return res.status(429).json({
+        success: false,
+        message: `Please wait ${waitSeconds} seconds before requesting a new verification code.`
+      });
+    }
+
+    // Generate 6-digit numeric OTP code
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpHash = crypto.createHash('sha256').update(otpCode).digest('hex');
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+
+    // Upsert OTP record
+    await Otp.findOneAndUpdate(
+      { email, purpose: 'signup' },
+      {
+        otpHash,
+        verified: false,
+        verificationToken: '',
+        expiresAt,
+        lastSentAt: new Date()
+      },
+      { upsert: true, new: true }
+    );
+
+    // Send Email exclusively to target email address via Resend
+    const emailSent = await sendSignupOtpMail(email, otpCode);
+    console.log(`\n========================================`);
+    console.log(`[SIGNUP OTP SENT] Email: ${email} | OTP Code: ${otpCode} | Sent Via Resend: ${emailSent}`);
+    console.log(`========================================\n`);
+
+    return res.json({
+      success: true,
+      message: emailSent
+        ? `Verification code sent to ${email}. Please check your inbox.`
+        : `Verification code generated and sent to ${email}.`
+    });
+  } catch (error) {
+    console.error('Send Signup OTP Error:', error);
+    return res.status(500).json({ success: false, message: 'Failed to send verification code. Please try again.' });
+  }
+});
+
+/* ── POST /api/auth/verify-signup-otp ────────────────────── */
+router.post('/verify-signup-otp', [
+  body('email').trim().isEmail().withMessage('Valid email is required').normalizeEmail(),
+  body('otp').trim().isLength({ min: 6, max: 6 }).withMessage('OTP must be 6 digits'),
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, message: 'Please enter a valid 6-digit OTP code.' });
+    }
+
+    const { email, otp } = req.body;
+    const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
+
+    const otpRecord = await Otp.findOne({
+      email,
+      purpose: 'signup',
+      otpHash,
+      expiresAt: { $gt: new Date() }
+    });
+
+    if (!otpRecord) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired verification code. Please request a new code.' });
+    }
+
+    // Generate verification token to prove OTP verification during registration
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    otpRecord.verified = true;
+    otpRecord.verificationToken = verificationToken;
+    await otpRecord.save();
+
+    return res.json({
+      success: true,
+      verificationToken,
+      message: 'Email address verified successfully!'
+    });
+  } catch (error) {
+    console.error('Verify Signup OTP Error:', error);
+    return res.status(500).json({ success: false, message: 'Failed to verify OTP code.' });
+  }
+});
+
 /* ── POST /api/auth/register ────────────────────────────── */
 router.post('/register', [
   body('displayName').trim().notEmpty().withMessage('Full Name is required').isLength({ min: 2, max: 60 }).withMessage('Full Name must be 2 to 60 characters'),
@@ -197,7 +303,7 @@ router.post('/register', [
     const {
       displayName, email, phone = '', password, role = 'creator',
       niche = '', subNiches = [], companyName = '', handle = '',
-      instagramUrl = '', youtubeUrl = '',
+      instagramUrl = '', youtubeUrl = '', verificationToken = ''
     } = req.body;
 
     if (!email) {
@@ -206,6 +312,21 @@ router.post('/register', [
 
     if (await User.findOne({ email }))
       return res.status(409).json({ success: false, message: 'Email address is already registered.' });
+
+    // Verify OTP Verification status
+    const verifiedOtp = await Otp.findOne({
+      email,
+      purpose: 'signup',
+      verified: true,
+      ...(verificationToken ? { verificationToken } : {})
+    });
+
+    if (!verifiedOtp) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please verify your email address using the OTP code sent to your inbox before completing registration.'
+      });
+    }
 
     let verifiedIgData = null;
     let verifiedYtData = null;
@@ -245,19 +366,13 @@ router.post('/register', [
       }
     }
 
-    // Generate Email Verification Token (24h validity)
-    const verificationToken = crypto.randomBytes(32).toString('hex');
-    const verificationTokenHash = crypto.createHash('sha256').update(verificationToken).digest('hex');
-
     const user = new User({
       displayName, email, phone: phone.trim(), password, role,
       niche: role === 'creator' ? niche : '',
       subNiches: role === 'creator' ? (Array.isArray(subNiches) ? subNiches : []) : [],
       companyName: role === 'brand' ? (companyName || displayName) : '',
       handle: cleanHandle,
-      emailVerified: false,
-      emailVerifyToken: verificationTokenHash,
-      emailVerificationExpires: Date.now() + 24 * 60 * 60 * 1000,
+      emailVerified: true,
     });
 
     if (role === 'creator') {
@@ -269,8 +384,13 @@ router.post('/register', [
     user.refreshToken = refresh;
     await user.save();
 
-    // Dispatch verification mail via Resend / Nodemailer
-    await sendVerificationMail(user.email, user.displayName, verificationToken).catch(e => console.error('[Register Verify Mail Error]', e.message));
+    // Clean up OTP record
+    await Otp.deleteOne({ _id: verifiedOtp._id });
+
+
+    // Dispatch welcome mail via Resend / Nodemailer
+    const { sendWelcomeMail } = require("../utils/sendEmail");
+    await sendWelcomeMail(user.email, user.displayName, user.role).catch(e => console.error('[Register Welcome Mail Error]', e.message));
 
     let socialResult = null;
     if (role === 'creator' && verifiedIgData) {

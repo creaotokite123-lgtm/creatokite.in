@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth, getDashboardPath } from '../../contexts/AuthContext';
+import { authAPI } from '../../api';
 import toast from 'react-hot-toast';
 import SEO from '../../components/common/SEO';
 import {
@@ -8,6 +9,198 @@ import {
   User, Mail, Lock, Globe, ShieldCheck,
   Eye, EyeOff, Sparkles, Grid
 } from 'lucide-react';
+
+/* ─────────────────────────────────────────────────────────────
+   OtpModal — 6-digit OTP Email Verification Dialog
+ ───────────────────────────────────────────────────────────── */
+function OtpModal({ email, onVerified, onClose }) {
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [sending, setSending] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [timer, setTimer] = useState(60);
+  const inputRefs = useRef([]);
+
+  useEffect(() => {
+    let interval = null;
+    if (timer > 0) {
+      interval = setInterval(() => setTimer(t => t - 1), 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  const handleChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1);
+    setOtp(newOtp);
+
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').trim();
+    if (/^\d{6}$/.test(pasted)) {
+      const digits = pasted.split('');
+      setOtp(digits);
+      inputRefs.current[5]?.focus();
+    }
+  };
+
+  const handleResend = async () => {
+    if (timer > 0 || sending) return;
+    setSending(true);
+    try {
+      const res = await authAPI.sendSignupOtp({ email });
+      toast.success(res.message || `New verification code sent to ${email}`);
+      setTimer(60);
+      setOtp(['', '', '', '', '', '']);
+      inputRefs.current[0]?.focus();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to resend code.');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleVerify = async (e) => {
+    if (e) e.preventDefault();
+    const otpCode = otp.join('');
+    if (otpCode.length < 6) return toast.error('Please enter all 6 digits of the OTP code');
+
+    setVerifying(true);
+    try {
+      const res = await authAPI.verifySignupOtp({ email, otp: otpCode });
+      toast.success('Email verified successfully! 🎉');
+      onVerified(res.verificationToken);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Invalid or expired OTP code.');
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 1000,
+      background: 'rgba(15, 14, 12, 0.75)',
+      backdropFilter: 'blur(10px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 20,
+    }}>
+      <div style={{
+        background: '#FFFFFF',
+        border: '1px solid #ECE7DE',
+        borderRadius: 24,
+        width: '100%', maxWidth: 460,
+        padding: '32px 28px',
+        boxShadow: '0 24px 60px rgba(0,0,0,0.25)',
+        fontFamily: 'Inter, sans-serif',
+        textAlign: 'center',
+      }}>
+        <div style={{
+          width: 56, height: 56, borderRadius: '50%',
+          background: 'rgba(230, 95, 43, 0.1)',
+          color: '#E65F2B',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          margin: '0 auto 16px',
+        }}>
+          <Mail size={26} />
+        </div>
+
+        <h2 style={{ fontSize: 20, fontWeight: 800, color: '#1F1C18', margin: '0 0 6px' }}>
+          Verify Your Email
+        </h2>
+        <p style={{ fontSize: 13, color: '#6E6B65', margin: '0 0 24px', lineHeight: 1.5 }}>
+          We've sent a 6-digit verification code to <br />
+          <strong style={{ color: '#1F1C18' }}>{email}</strong>
+        </p>
+
+        <form onSubmit={handleVerify}>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 24 }} onPaste={handlePaste}>
+            {otp.map((digit, idx) => (
+              <input
+                key={idx}
+                ref={el => inputRefs.current[idx] = el}
+                type="text"
+                inputMode="numeric"
+                maxLength={1}
+                value={digit}
+                onChange={e => handleChange(idx, e.target.value)}
+                onKeyDown={e => handleKeyDown(idx, e)}
+                style={{
+                  width: 46, height: 54, borderRadius: 12,
+                  border: digit ? '2px solid #E65F2B' : '1px solid #D6D1C7',
+                  background: digit ? 'rgba(230, 95, 43, 0.04)' : '#F9F8F5',
+                  textAlign: 'center', fontSize: 22, fontWeight: 800,
+                  color: '#1F1C18', outline: 'none',
+                  transition: 'all 0.15s ease',
+                }}
+              />
+            ))}
+          </div>
+
+          <button
+            type="submit"
+            disabled={verifying || otp.join('').length < 6}
+            style={{
+              width: '100%', padding: '14px', borderRadius: 12,
+              background: otp.join('').length === 6 ? '#E65F2B' : '#CCC',
+              color: '#FFF', border: 'none', fontWeight: 700, fontSize: 14,
+              cursor: otp.join('').length === 6 ? 'pointer' : 'not-allowed',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              transition: 'background 0.2s',
+            }}
+          >
+            {verifying ? 'Verifying Code...' : 'Verify & Continue →'}
+          </button>
+        </form>
+
+        <div style={{ marginTop: 20, fontSize: 13, color: '#6E6B65' }}>
+          Didn't receive the code?{' '}
+          {timer > 0 ? (
+            <span style={{ fontWeight: 600, color: '#888' }}>
+              Resend in {timer}s
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={sending}
+              style={{
+                background: 'none', border: 'none', color: '#E65F2B',
+                fontWeight: 700, cursor: 'pointer', padding: 0,
+                textDecoration: 'underline',
+              }}
+            >
+              {sending ? 'Sending...' : 'Resend OTP'}
+            </button>
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={onClose}
+          style={{
+            marginTop: 16, background: 'none', border: 'none',
+            color: '#888278', fontSize: 12, cursor: 'pointer',
+          }}
+        >
+          ← Change Email Address
+        </button>
+      </div>
+    </div>
+  );
+}
+
 
 /* ─────────────────────────────────────────────────────────────
    TermsModal — shows Creator or Brand T&C based on role prop
@@ -321,6 +514,11 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedNiches, setSelectedNiches] = useState([]);
 
+  // OTP Email Verification State
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [verificationToken, setVerificationToken] = useState('');
+
   const handleNichesChange = (newNiches) => {
     setSelectedNiches(newNiches);
     setForm(p => ({
@@ -335,24 +533,62 @@ export default function Register() {
     niche: '', subNiches: [], companyName: '', handle: '',
     instagramUrl: '', youtubeUrl: '',
   });
-  const upd = k => e => setForm(p => ({ ...p, [k]: e.target.value }));
+  const upd = k => e => {
+    if (k === 'email') {
+      setIsEmailVerified(false);
+      setVerificationToken('');
+    }
+    setForm(p => ({ ...p, [k]: e.target.value }));
+  };
 
-  const handleStep1Submit = e => {
+  const handleStep1Submit = async e => {
     e.preventDefault();
     if (!form.displayName.trim() || !form.email.trim() || !form.password) return toast.error('Fill all required fields');
     if (form.password.length < 6) return toast.error('Password min 6 characters');
     if (!termsAccepted) return toast.error('Please accept the Terms & Conditions to continue');
     if (form.role === 'creator' && selectedNiches.length === 0) return toast.error('Please select or write at least one niche');
 
+    // Trigger OTP Email Verification if not verified yet
+    if (!isEmailVerified) {
+      setLoading(true);
+      try {
+        const res = await authAPI.sendSignupOtp({ email: form.email.trim() });
+        toast.success(res.message || `Verification code sent to ${form.email}`);
+        setShowOtpModal(true);
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'Failed to send verification code.');
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     if (form.role === 'brand') {
-      handleFinalRegister();
+      handleFinalRegister(null, verificationToken);
     } else {
       setStep(2);
     }
   };
 
-  const handleFinalRegister = async e => {
+  const handleOtpVerified = (token) => {
+    setVerificationToken(token);
+    setIsEmailVerified(true);
+    setShowOtpModal(false);
+    if (form.role === 'brand') {
+      handleFinalRegister(null, token);
+    } else {
+      setStep(2);
+    }
+  };
+
+  const handleFinalRegister = async (e, tokenOverride) => {
     if (e) e.preventDefault();
+
+    const currentToken = tokenOverride || verificationToken;
+    if (!isEmailVerified && !currentToken) {
+      toast.error('Please verify your email address first.');
+      return;
+    }
 
     if (form.role === 'creator') {
       const handleValue = form.handle.trim() || form.instagramUrl.trim();
@@ -369,6 +605,7 @@ export default function Register() {
 
       const payload = {
         ...form,
+        verificationToken: currentToken,
         handle: cleanHandle,
         instagramUrl: form.instagramUrl.trim() || (cleanHandle ? `https://instagram.com/${cleanHandle}` : ''),
         termsAccepted: true
@@ -397,6 +634,13 @@ export default function Register() {
       />
 
       {showTerms && <TermsModal role={form.role} onClose={() => setShowTerms(false)} />}
+      {showOtpModal && (
+        <OtpModal
+          email={form.email.trim()}
+          onVerified={handleOtpVerified}
+          onClose={() => setShowOtpModal(false)}
+        />
+      )}
 
       {/* ── LEFT PANEL (DARK HERO WITH REAL MOUNTAINS & REALISTIC 3D KITE) ── */}
       <div className="reg-left-panel">
@@ -500,7 +744,18 @@ export default function Register() {
 
                 {/* Email address */}
                 <div className="login-field-group">
-                  <label className="login-field-label">Email address *</label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                    <label className="login-field-label" style={{ margin: 0 }}>Email address *</label>
+                    {isEmailVerified ? (
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#10B981', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                        <CheckCircle2 size={13} /> Email Verified
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#E65F2B' }}>
+                        OTP Verification Required
+                      </span>
+                    )}
+                  </div>
                   <div className="login-input-wrap">
                     <Mail size={16} className="login-input-icon" />
                     <input
@@ -510,7 +765,21 @@ export default function Register() {
                       placeholder="you@example.com"
                       required
                       className="login-input"
+                      disabled={isEmailVerified}
                     />
+                    {isEmailVerified && (
+                      <button
+                        type="button"
+                        onClick={() => { setIsEmailVerified(false); setVerificationToken(''); }}
+                        style={{
+                          position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+                          background: 'none', border: 'none', color: '#888278', fontSize: 11, cursor: 'pointer',
+                          textDecoration: 'underline'
+                        }}
+                      >
+                        Edit
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -571,10 +840,15 @@ export default function Register() {
                   className="login-submit-btn"
                 >
                   <Sparkles size={16} />
-                  <span>Next: Connect Social Profile</span>
+                  <span>
+                    {isEmailVerified
+                      ? (form.role === 'brand' ? 'Complete Registration' : 'Next: Connect Social Profile')
+                      : 'Verify Email & Continue'}
+                  </span>
                   <ArrowRight size={16} />
                 </button>
               </form>
+
             ) : (
               <form onSubmit={handleFinalRegister} className="login-form">
                 {/* Phone Number */}

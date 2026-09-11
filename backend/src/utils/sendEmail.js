@@ -102,6 +102,21 @@ exports.sendResetPasswordMail = (to, otpCode) => send(
   )
 );
 
+exports.sendSignupOtpMail = (to, otpCode) => send(
+  to,
+  '✉️ Verification Code — CreatoKite Sign Up',
+  base(
+    `${h2('Verify Your Email Address')}
+     ${p('Welcome to CreatoKite! Please enter the 6-digit verification code below to verify your email address and complete your registration.')}
+     <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,107,87,0.3);padding:20px 24px;border-radius:14px;text-align:center;margin:20px 0;box-shadow:0 8px 24px rgba(255,107,87,0.15);">
+       <span style="font-size:36px;font-weight:900;letter-spacing:10px;color:#FF6B57;font-family:monospace;">${otpCode}</span>
+     </div>
+     ${p('This code is valid for 10 minutes. For security, never share this code with anyone.')}`,
+    'Verify Email'
+  )
+);
+
+
 exports.sendCampaignAssignedMail = (to, name, campaignTitle, deadline) => send(to,`🎯 New Campaign: ${campaignTitle}`, base(`${h2('Campaign Assigned!')}<div style="background:rgba(255,107,87,0.08);border:1px solid rgba(255,107,87,0.2);border-radius:10px;padding:16px;margin:16px 0;">${p(`<strong style="color:#FF6B57">${campaignTitle}</strong>`)}<p style="color:#8892A4;font-size:12px;margin:0;">Deadline: ${new Date(deadline).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</p></div>${p(`Hi ${name}, you've been assigned to a new campaign. Please log in to review the brief and accept or decline.`)}${btn(`${CLIENT}/creator/assigned`,'View Campaign')}`, 'Campaign Assigned'));
 
 exports.sendCampaignAcceptedMail = (to, adminName, creatorName, campaignTitle) => send(to,`Creator Accepted: ${campaignTitle}`, base(`${h2('Creator Accepted Campaign')}${p(`${creatorName} has accepted the campaign <strong>${campaignTitle}</strong>.`)}${btn(`${CLIENT}/admin/campaigns`,'View Campaign')}`, 'Creator Accepted'));

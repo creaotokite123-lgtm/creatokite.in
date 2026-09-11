@@ -619,6 +619,19 @@ const opportunitySchema = new mongoose.Schema({
 }, { timestamps: true });
 opportunitySchema.index({ status: 1, deadline: 1 });
 
+/* ════ OTP VERIFICATION ════ */
+const otpSchema = new mongoose.Schema({
+  email: { type: String, required: true, lowercase: true, trim: true },
+  otpHash: { type: String, required: true },
+  purpose: { type: String, enum: ['signup', 'reset_password'], default: 'signup' },
+  verified: { type: Boolean, default: false },
+  verificationToken: { type: String, default: '' },
+  expiresAt: { type: Date, required: true },
+  lastSentAt: { type: Date, default: Date.now }
+}, { timestamps: true });
+otpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+otpSchema.index({ email: 1, purpose: 1 });
+
 /* ════ EXPORTS ════ */
 module.exports = {
   User: mongoose.model('User', userSchema),
@@ -643,4 +656,6 @@ module.exports = {
   KnowledgeArticle: mongoose.model('KnowledgeArticle', knowledgeArticleSchema),
   FeedEvent: mongoose.model('FeedEvent', feedEventSchema),
   Opportunity: mongoose.model('Opportunity', opportunitySchema),
+  Otp: mongoose.model('Otp', otpSchema),
 };
+

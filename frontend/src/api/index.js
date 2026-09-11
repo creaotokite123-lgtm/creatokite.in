@@ -53,6 +53,8 @@ export const authAPI = {
   me:             () => api.get('/auth/me').then(unwrap),
   forgotPassword: d  => api.post('/auth/forgot-password', d).then(unwrap),
   resetPassword:  d  => api.post('/auth/reset-password', d).then(unwrap),
+  sendSignupOtp:  d  => api.post('/auth/send-signup-otp', d).then(unwrap),
+  verifySignupOtp:d  => api.post('/auth/verify-signup-otp', d).then(unwrap),
 };
 
 export const campaignsAPI = {
