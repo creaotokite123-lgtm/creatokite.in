@@ -232,7 +232,7 @@ const PORT = process.env.PORT || 5000;
 connectDB().then(() => {
   server.listen(PORT, () => {
     console.log(`\n🚀 CreatoKite V2.5 · Port ${PORT} · ${process.env.NODE_ENV}`);
-    console.log(`   CORS   → ${CLIENT}`);
+    console.log(`   CORS   → ${allowedOrigins.join(', ')}`);
     console.log(`   Health → http://localhost:${PORT}/health\n`);
     try { const { startTracker } = require('./services/reelTracker'); startTracker(io); } catch(e) {}
     scheduleCrons();

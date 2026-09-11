@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const getBaseUrl = () => {
   let raw = (import.meta.env.VITE_API_URL || '').trim();
   if (!raw) return '/api';
