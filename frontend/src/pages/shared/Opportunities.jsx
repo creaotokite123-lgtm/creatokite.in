@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { PageLoader, EmptyState, Spinner, renderTextWithLinks } from '../../components/ui';
 import { Search, ExternalLink, Calendar, Award, Briefcase, Sparkles } from 'lucide-react';
+import SEO from '../../components/common/SEO';
 import api from '../../api';
 
 const CATEGORY_LABELS = {
@@ -56,6 +57,12 @@ export default function Opportunities() {
 
   return (
     <div className="page-enter" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <SEO
+        title="Creator Opportunities &amp; UGC Brand Gigs | CreatoKite"
+        description="Browse active UGC creator opportunities, brand deals, sponsored challenges, and high-payout video campaigns on CreatoKite."
+        keywords="UGC Deals, Creator Opportunities, Sponsored Video Gigs, Brand Collaborations, CreatoKite Jobs"
+        canonical="/opportunities"
+      />
       {/* Header Banner */}
       <div className="card" style={{
         background: 'linear-gradient(135deg, rgba(212,162,76,0.12), rgba(99,102,241,0.12))',

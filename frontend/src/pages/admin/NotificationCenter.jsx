@@ -114,7 +114,7 @@ const INITIAL_NOTIFICATIONS = [
     requireAck: false,
     content: 'Discover how AI creator matching increases campaign ROI by 3.5x. Save your spot for Thursday.',
     ctaLabel: 'Register',
-    ctaUrl: 'https://creatokite.com/webinar'
+    ctaUrl: 'https://www.creatokite.in/webinar'
   }
 ];
 

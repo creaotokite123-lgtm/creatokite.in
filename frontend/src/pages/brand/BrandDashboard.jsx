@@ -51,9 +51,9 @@ export default function BrandDashboard() {
   return (
     <div className="page-enter brand-dashboard" style={{ display:'flex', flexDirection:'column', gap:20 }}>
       <SEO 
-        title="Brand & Dealer Campaign Portal | Creatokite"
+        title="Brand &amp; Dealer Campaign Portal | CreatoKite"
         description="Manage UGC campaigns, dealer networks, creator assignments, and live analytics."
-        canonical="/brand"
+        noindex={true}
       />
       <style>{`
 
@@ -207,7 +207,7 @@ export default function BrandDashboard() {
         }}>
           <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, color: 'var(--t1)' }}>
             <Lightbulb size={16} style={{ color: 'var(--gold)' }} />
-            <span>How Creatokite works for your brand</span>
+            <span>How CreatoKite works for your brand</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
             {[

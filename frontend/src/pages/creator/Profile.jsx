@@ -142,7 +142,7 @@ export default function Profile() {
   };
 
   const handleDeleteAccount = async () => {
-    if (window.confirm("⚠️ WARNING: Deleting your account will permanently remove all your settings, matches, and profile data from Creatokite. This action cannot be undone.\n\nAre you sure you want to delete your account?")) {
+    if (window.confirm("⚠️ WARNING: Deleting your account will permanently remove all your settings, matches, and profile data from CreatoKite. This action cannot be undone.\n\nAre you sure you want to delete your account?")) {
       try {
         await usersAPI.deleteAccount();
         toast.success('Account successfully deleted.');

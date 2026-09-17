@@ -106,8 +106,11 @@ export default function Landing() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [stats, setStats] = useState({
     displayCreators: '200+',
+    displayVerifiedCreators: '200+',
     displayBrands: '4+',
     displayCampaigns: '25+',
+    displayCampaignValue: '₹1.5L+',
+    displayMatchAccuracy: '98.4%',
   });
 
   useEffect(() => {
@@ -116,8 +119,11 @@ export default function Landing() {
         if (res.data?.success) {
           setStats({
             displayCreators: res.data.displayCreators || '200+',
+            displayVerifiedCreators: res.data.displayVerifiedCreators || res.data.displayCreators || '200+',
             displayBrands: res.data.displayBrands || '4+',
             displayCampaigns: res.data.displayCampaigns || '25+',
+            displayCampaignValue: res.data.displayCampaignValue || '₹1.5L+',
+            displayMatchAccuracy: res.data.displayMatchAccuracy || '98.4%',
           });
         }
       })
@@ -229,22 +235,122 @@ export default function Landing() {
   return (
     <div id="landing-page-root">
       <SEO
-        title="Creatokite — #1 UGC Agency, Brand & Dealer Creator Community Platform"
-        description="Creatokite is the ultimate AI-powered UGC agency platform connecting top brands, dealer networks, and creator communities for high-ROI video campaigns."
-        keywords="UGC Agency, Brand Creator Marketing, Dealer Creator Network, Creator Community, UGC Video Platform, Influencer Campaign OS, Creatokite"
+        title="CreatoKite | UGC Agency, Brand & Creator Community Platform"
+        description="CreatoKite connects brands and creator communities for high-impact UGC campaigns, creator discovery, and performance collaboration across India."
+        keywords="CreatoKite, Creato Kite, CreatoKite UGC, UGC agency India, UGC creator platform, creator community platform, brand creator collaboration platform, influencer marketing platform India, UGC campaigns for brands, hire UGC creators India, creator monetization platform"
         canonical="/"
         jsonLd={{
           "@context": "https://schema.org",
-          "@type": "Service",
-          "name": "UGC Agency & Creator Campaign Platform",
-          "provider": {
-            "@type": "Organization",
-            "name": "Creatokite",
-            "url": "https://creatokite.com"
-          },
-          "serviceType": "UGC Agency & Creator Community OS",
-          "areaServed": "Global",
-          "description": "Connecting top brands, dealers, and creator communities with AI-driven matching and campaign management."
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://www.creatokite.in/#organization",
+              "name": "CreatoKite",
+              "alternateName": ["Creato Kite", "CreatoKite UGC", "CreatoKite Platform", "CreatoKite Agency"],
+              "url": "https://www.creatokite.in/",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://www.creatokite.in/logo.png"
+              },
+              "image": "https://www.creatokite.in/assets/creatokite_logo_official.png",
+              "description": "CreatoKite connects brands and creator communities for high-impact UGC campaigns, creator discovery, and performance collaboration across India.",
+              "areaServed": "India",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "contactType": "Customer Support",
+                "email": "creaotokite123@gmail.com",
+                "availableLanguage": ["English", "Hindi"]
+              },
+              "sameAs": [
+                "https://www.instagram.com/creatokite",
+                "https://www.linkedin.com/company/creatokite",
+                "https://twitter.com/creatokite"
+              ]
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://www.creatokite.in/#website",
+              "name": "CreatoKite",
+              "url": "https://www.creatokite.in/",
+              "publisher": {
+                "@id": "https://www.creatokite.in/#organization"
+              }
+            },
+            {
+              "@type": "ProfessionalService",
+              "@id": "https://www.creatokite.in/#service",
+              "name": "CreatoKite UGC Agency & Creator Matching Platform",
+              "url": "https://www.creatokite.in/",
+              "serviceType": "UGC Video Marketing & Creator Collaboration",
+              "provider": {
+                "@id": "https://www.creatokite.in/#organization"
+              },
+              "areaServed": "India",
+              "description": "AI-powered UGC creator matchmaking, end-to-end video campaign curation, and live performance ROI tracking for Indian brands."
+            },
+            {
+              "@type": "FAQPage",
+              "@id": "https://www.creatokite.in/#faq",
+              "mainEntity": [
+                {
+                  "@type": "Question",
+                  "name": "What is CreatoKite?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "CreatoKite is India's first AI-powered Creator Ecosystem Platform. Creators join to learn, participate in activities, build their reputation, and get matched with premium brand campaigns. Brands get curated, verified creators with real engagement."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "How does the platform work?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "The process is simple: (1) You register and build your creator profile, (2) Complete daily and weekly activities to earn XP and grow your ranking, (3) Learn through our Academy to build skills, (4) As your Creator Power Score improves, you become eligible for brand campaigns, (5) Campaigns are assigned by our AI and admin team — brands never contact you directly."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Who can join CreatoKite?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Any content creator with an active social media presence can join. Whether you have 1,000 or 1,000,000 followers — we evaluate creators based on engagement quality, content authenticity, and growth consistency — not just follower count."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Is it free to join?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes, joining CreatoKite as a creator is completely free. There are no subscription fees, no hidden charges. You earn rewards, XP, and payouts when you complete brand campaigns."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "How long does account approval take?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Creator profiles are reviewed within 24–72 hours. Our admin team verifies your social accounts, checks engagement authenticity, and ensures your profile meets platform standards. You'll receive a notification once approved."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "What do I need to get started?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "You need: an active social media account (minimum 1,000 followers), an email address, and a completed profile with your niche, location, and platform links. The more complete your profile, the faster you'll get approved and the higher your initial score."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Can beginners join?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Absolutely. We welcome creators at every stage. Beginners start at Level 1 (Beginner) and grow through our activity and academy systems. Consistent participation matters more than follower count. Many of our top-ranked creators started from zero on our platform."
+                  }
+                }
+              ]
+            }
+          ]
         }}
       />
       {/* Dynamically load the Google fonts inside the DOM wrapper */}
@@ -340,9 +446,9 @@ export default function Landing() {
             {/* Social Proof Footer */}
             <div className="reveal reveal-delay-5 hero-social-proof">
               <div className="avatar-stack">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80" alt="Creator 1" className="avatar-img" />
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80" alt="Creator 2" className="avatar-img" />
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80" alt="Creator 3" className="avatar-img" />
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80" alt="CreatoKite creator community member Riya" width="36" height="36" className="avatar-img" />
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80" alt="CreatoKite creator community member Kabir" width="36" height="36" className="avatar-img" />
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80" alt="CreatoKite creator community member Devika" width="36" height="36" className="avatar-img" />
               </div>
               <span className="social-proof-text">
                 Trusted by <strong>{stats.displayCreators}</strong> creators & <strong>{stats.displayBrands}</strong> brands
@@ -430,7 +536,7 @@ export default function Landing() {
               {/* Card 1: Top-Left Creator Card (Female) */}
               <div className="hero-card card-creator-top float-anim-1">
                 <div className="creator-img-wrapper">
-                  <img src="/assets/hero_creator_female.jpg" alt="Creator Riya" className="creator-photo" />
+                  <img src="/assets/hero_creator_female.jpg" alt="CreatoKite creator portfolio - Riya Malhotra, Fashion &amp; Lifestyle" className="creator-photo" width="180" height="220" />
                   <span className="card-tag tag-orange">Creator</span>
                   <div className="card-stats-row">
                     <div className="stat-pill">
@@ -509,7 +615,7 @@ export default function Landing() {
               {/* Card 5: Bottom-Right Creator Card (Male) */}
               <div className="hero-card card-creator-bottom float-anim-5">
                 <div className="creator-img-wrapper">
-                  <img src="/assets/hero_creator_male.jpg" alt="Creator Alex" className="creator-photo" />
+                  <img src="/assets/hero_creator_male.jpg" alt="CreatoKite creator portfolio - Alex Kumar, Tech &amp; Reviews" className="creator-photo" width="180" height="220" />
                   <span className="card-tag tag-dark">Creator</span>
                   <div className="card-stats-row">
                     <div className="stat-pill">
@@ -527,6 +633,8 @@ export default function Landing() {
         </div>
       </header>
 
+      {/* ── MAIN CONTENT WRAPPER ───────────────────────────── */}
+      <main id="main-content">
       {/* ── MARQUEE DIVIDER 1 ───────────────────────────────── */}
       <div className="marquee">
         <div className="marquee-track">
@@ -624,7 +732,7 @@ export default function Landing() {
               {/* Inner White Creator Match Card */}
               <div className="fashion-inner-card">
                 <div className="match-row">
-                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80" alt="Ananya" className="match-avatar" />
+                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80" alt="CreatoKite fashion creator Ananya Sharma" width="40" height="40" className="match-avatar" />
                   <div className="match-info">
                     <div className="match-name">Ananya Sharma</div>
                     <div className="match-niche">Fashion & Styling</div>
@@ -633,7 +741,7 @@ export default function Landing() {
                 </div>
 
                 <div className="match-row">
-                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80" alt="Kabir" className="match-avatar" />
+                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80" alt="CreatoKite creative director Kabir Mehta" width="40" height="40" className="match-avatar" />
                   <div className="match-info">
                     <div className="match-name">Kabir Mehta</div>
                     <div className="match-niche">Creative Direction</div>
@@ -642,7 +750,7 @@ export default function Landing() {
                 </div>
 
                 <div className="match-row">
-                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80" alt="Riya" className="match-avatar" />
+                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80" alt="CreatoKite editorial photographer Riya Sen" width="40" height="40" className="match-avatar" />
                   <div className="match-info">
                     <div className="match-name">Riya Sen</div>
                     <div className="match-niche">Editorial Photography</div>
@@ -661,11 +769,11 @@ export default function Landing() {
                     </svg>
                   </div>
                   <h3 className="card-heading">Rework the everyday.</h3>
-                  <p className="card-studio-sub">North Studio12 creators</p>
+                  <p className="card-studio-sub">North Studio • 12 creators</p>
                 </div>
 
                 <div className="fashion-bottom-graphic">
-                  <img src="/assets/campaign_arch_3d.jpg" alt="3D Arch" className="arch-graphic-img" />
+                  <img src="/assets/campaign_arch_3d.jpg" alt="CreatoKite fashion campaign brief creative visual" loading="lazy" className="arch-graphic-img" />
                 </div>
               </div>
             </div>
@@ -706,11 +814,11 @@ export default function Landing() {
                       </svg>
                     </div>
                     <h3 className="card-heading">Slow mornings.</h3>
-                    <p className="card-studio-sub">Good Ground8 creators</p>
+                    <p className="card-studio-sub">Good Ground • 8 creators</p>
                   </div>
 
                   <div className="lifestyle-graphic-right">
-                    <img src="/assets/campaign_lifestyle_mug.jpg" alt="Lifestyle Mug" className="mug-graphic-img" />
+                    <img src="/assets/campaign_lifestyle_mug.jpg" alt="CreatoKite lifestyle mug product collaboration" loading="lazy" className="mug-graphic-img" />
                   </div>
                 </div>
               </div>
@@ -736,11 +844,11 @@ export default function Landing() {
                       </svg>
                     </div>
                     <h3 className="card-heading">Future, in your hands.</h3>
-                    <p className="card-studio-sub">Mono Labs15 creators</p>
+                    <p className="card-studio-sub">Mono Labs • 15 creators</p>
                   </div>
 
                   <div className="tech-graphic-right">
-                    <img src="/assets/campaign_purple_glass.jpg" alt="Purple Glass 3D" className="glass-graphic-img" />
+                    <img src="/assets/campaign_purple_glass.jpg" alt="CreatoKite technology 3D glass product review campaign" loading="lazy" className="glass-graphic-img" />
                   </div>
                 </div>
               </div>
@@ -1033,23 +1141,24 @@ export default function Landing() {
 
             <div className="final-trust-bar">
               <div className="trust-item">
-                <strong>12,500+</strong>
+                <strong>{stats.displayVerifiedCreators}</strong>
                 <span>Verified Creators</span>
               </div>
               <div className="trust-divider" />
               <div className="trust-item">
-                <strong>₹4.2Cr+</strong>
+                <strong>{stats.displayCampaignValue}</strong>
                 <span>Campaign Value</span>
               </div>
               <div className="trust-divider" />
               <div className="trust-item">
-                <strong>98.4%</strong>
+                <strong>{stats.displayMatchAccuracy}</strong>
                 <span>Match Accuracy</span>
               </div>
             </div>
           </div>
         </div>
       </section>
+      </main>
 
       {/* ── FOOTER SECTION ───────────────────────────────────── */}
       <footer id="login">

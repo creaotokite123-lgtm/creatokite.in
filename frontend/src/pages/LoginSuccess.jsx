@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth, getDashboardPath } from "../contexts/AuthContext";
+import SEO from "../components/common/SEO";
 import { authAPI } from "../api";
 
 export default function LoginSuccess() {
@@ -55,6 +56,7 @@ export default function LoginSuccess() {
         color: 'var(--t1)'
       }}
     >
+      <SEO title="Authenticating | CreatoKite" noindex={true} />
       Logging in...
     </div>
   );

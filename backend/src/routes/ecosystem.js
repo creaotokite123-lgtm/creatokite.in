@@ -246,7 +246,7 @@ router.post('/academy/lessons/:id/complete', auth, async (req, res) => {
     let newCertificate = null;
     if (lessonsInCat > 0 && lessonsInCat === userCompletionsInCat) {
       const certName = `${lesson.category} Certificate`;
-      const url = `https://creatokite.com/certificates/${req.user._id}/${lesson.category.toLowerCase().replace(/\s+/g, '-')}`;
+      const url = `https://www.creatokite.in/certificates/${req.user._id}/${lesson.category.toLowerCase().replace(/\s+/g, '-')}`;
       
       const certObj = { name: certName, courseName: lesson.category, url, earnedAt: new Date() };
       

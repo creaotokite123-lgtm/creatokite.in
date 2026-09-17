@@ -297,7 +297,7 @@ function TermsModal({ role, onClose }) {
             border: '1px solid rgba(230, 95, 43, 0.18)',
             borderRadius: 10, fontSize: 12, color: '#E65F2B',
           }}>
-            📩 Questions? Contact us at <strong>support@creatokite.com</strong>
+            📩 Questions? Contact us at <strong>creaotokite123@gmail.com</strong>
           </p>
         </div>
 
@@ -628,9 +628,9 @@ export default function Register() {
   return (
     <div className="login-root-container">
       <SEO
-        title="Join CreatoKite | UGC Platform & Creator Signup"
-        description="Register as a Brand, Dealer Network, or UGC Creator on CreatoKite."
-        canonical="/signup"
+        title="Join CreatoKite | UGC Creator & Brand Platform Registration"
+        description="Create your account on CreatoKite. Join top UGC creators, launch brand campaigns, and scale video content production seamlessly."
+        canonical="/register"
       />
 
       {showTerms && <TermsModal role={form.role} onClose={() => setShowTerms(false)} />}

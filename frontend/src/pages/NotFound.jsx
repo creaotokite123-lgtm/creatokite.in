@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import SEO from '../components/common/SEO';
 import {
   Compass, ArrowLeft, Home, Search, Sparkles, Rocket, Globe,
   ShieldAlert, HelpCircle, Layers, Flame, FileText, ChevronRight
@@ -63,6 +64,11 @@ export default function NotFound() {
       overflow: 'hidden',
       padding: '32px 16px'
     }}>
+      <SEO
+        title="Page Not Found | CreatoKite"
+        description="The page you requested could not be found on CreatoKite."
+        noindex={true}
+      />
       {/* ── Dynamic Ambient Background Glows ── */}
       <div style={{
         position: 'absolute',

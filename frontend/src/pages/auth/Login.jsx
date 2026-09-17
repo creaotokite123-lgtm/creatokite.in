@@ -99,8 +99,8 @@ export default function Login() {
   return (
     <div className="login-root-container">
       <SEO
-        title="Portal Login | CreatoKite UGC Platform"
-        description="Log in to your CreatoKite Brand Dashboard, Creator Community Portal, or Admin Hub."
+        title="Login to CreatoKite | Brand & Creator Portal"
+        description="Sign in to your CreatoKite account to manage UGC campaigns, review creator submissions, track real-time analytics, and access collaboration rooms."
         canonical="/login"
       />
 

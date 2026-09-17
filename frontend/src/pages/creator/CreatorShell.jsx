@@ -25,9 +25,9 @@ export default function CreatorShell({ children, className = '', style, ...rest 
       {...rest}
     >
       <SEO 
-        title="Creator Community Hub | Creatokite"
-        description="Access campaigns, earnings, portfolio, and collaboration briefs in the Creatokite Creator Community Workspace."
-        canonical="/creator"
+        title="Creator Community Hub | CreatoKite"
+        description="Access campaigns, earnings, portfolio, and collaboration briefs in the CreatoKite Creator Community Workspace."
+        noindex={true}
       />
       {showModal && <CreatorOnboardingModal user={user} onComplete={() => refreshUser()} />}
       {children}

@@ -1,41 +1,41 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-const ROUTE_SEO = {
+const SITE_URL = 'https://www.creatokite.in';
+const DEFAULT_OG_IMAGE = `${SITE_URL}/assets/creatokite_logo_official.png`;
+
+const PUBLIC_ROUTE_SEO = {
   '/': {
-    title: 'Creatokite — AI UGC Agency, Brand & Dealer Creator Platform',
-    description: 'Creatokite is India\'s premier AI-powered UGC agency OS connecting top brands, dealer networks, and creator communities for high-performing video campaigns.',
-    keywords: 'UGC Agency, UGC Creator Platform, Brand Creator Marketing, Dealer Creator Network, Creator Community, UGC Video Agency, Influencer Campaign OS, Creatokite',
+    title: 'CreatoKite | UGC Agency, Brand & Creator Community Platform',
+    description: 'CreatoKite connects brands and creator communities for high-impact UGC campaigns, creator discovery, and performance collaboration across India.',
+    keywords: 'CreatoKite, Creato Kite, CreatoKite UGC, UGC agency India, UGC creator platform, creator community platform, brand creator collaboration platform, influencer marketing platform India, UGC campaigns for brands, hire UGC creators India',
+    canonical: `${SITE_URL}/`,
+    noindex: false,
+    breadcrumb: 'Home',
   },
   '/login': {
-    title: 'Login to Creatokite — AI UGC Agency & Campaign OS',
-    description: 'Sign in to your Creatokite account to manage UGC campaigns, review creator submissions, track real-time analytics, and access collaboration rooms.',
-    keywords: 'Creatokite Login, Creator Sign In, Brand Portal Login, UGC Campaign Login',
+    title: 'Login to CreatoKite | Brand & Creator Portal',
+    description: 'Sign in to your CreatoKite account to manage UGC campaigns, review creator submissions, track real-time analytics, and access collaboration rooms.',
+    keywords: 'CreatoKite Login, Creator Sign In, Brand Portal Login, UGC Campaign Login',
+    canonical: `${SITE_URL}/login`,
+    noindex: false,
+    breadcrumb: 'Login',
   },
   '/register': {
-    title: 'Join Creatokite — Register as Creator or Brand Partner',
-    description: 'Create your account on Creatokite. Join top UGC creators, launch brand campaigns, and scale video content production seamlessly.',
-    keywords: 'Join Creatokite, UGC Creator Signup, Brand Registration, Influencer Onboarding',
+    title: 'Join CreatoKite | UGC Creator & Brand Platform Registration',
+    description: 'Create your account on CreatoKite. Join top UGC creators, launch brand campaigns, and scale video content production seamlessly.',
+    keywords: 'Join CreatoKite, UGC Creator Signup, Brand Registration, Influencer Onboarding, Creator Monetization India',
+    canonical: `${SITE_URL}/register`,
+    noindex: false,
+    breadcrumb: 'Register',
   },
   '/opportunities': {
-    title: 'UGC Campaign Opportunities & Brand Gigs — Creatokite',
-    description: 'Browse active UGC creator opportunities, brand deals, sponsored challenges, and high-payout video campaigns on Creatokite.',
-    keywords: 'UGC Deals, Creator Opportunities, Sponsored Video Gigs, Brand Collaborations, Creatokite Jobs',
-  },
-  '/knowledge': {
-    title: 'Creatokite Knowledge Base & Creator Academy',
-    description: 'Learn UGC video creation strategies, brand guidelines, campaign execution best practices, and creator growth tactics.',
-    keywords: 'Creator Academy, UGC Guide, Video Campaign Best Practices, Creatokite Learning',
-  },
-  '/leaderboard': {
-    title: 'Top Creator Community Leaderboard — Creatokite',
-    description: 'Explore Creatokite top-ranked UGC creators, high-performing video strategists, and monthly community leaderboard rankings.',
-    keywords: 'Top UGC Creators, Creator Leaderboard, Influencer Rankings, Creatokite Community',
-  },
-  '/admin/dashboard': {
-    title: 'Control Center Dashboard — Creatokite Admin',
-    description: 'Monitor real-time campaign health, creator approvals, revenue analytics, and brand activities on Creatokite.',
-    keywords: 'Creatokite Admin, Campaign Control Center, Admin Dashboard',
+    title: 'Creator Opportunities & UGC Brand Gigs | CreatoKite',
+    description: 'Browse active UGC creator opportunities, brand deals, sponsored challenges, and high-payout video campaigns on CreatoKite.',
+    keywords: 'UGC Deals, Creator Opportunities, Sponsored Video Gigs, Brand Collaborations, CreatoKite Jobs, Paid Creator Campaigns',
+    canonical: `${SITE_URL}/opportunities`,
+    noindex: false,
+    breadcrumb: 'Opportunities',
   },
 };
 
@@ -44,10 +44,22 @@ export default function DynamicSEO() {
 
   useEffect(() => {
     const currentPath = location.pathname;
-    const seo = ROUTE_SEO[currentPath] || {
-      title: 'Creatokite — AI UGC Agency & Creator Campaign OS',
-      description: 'Scale your brand with top UGC creators, dealer network campaigns, and automated creator workflows on Creatokite.',
-      keywords: 'Creatokite, UGC Platform, Creator OS, Brand Campaigns',
+    const isPrivate = currentPath.startsWith('/admin') ||
+      currentPath.startsWith('/team') ||
+      currentPath.startsWith('/creator') ||
+      currentPath.startsWith('/brand') ||
+      currentPath.startsWith('/superadmin') ||
+      currentPath === '/login-success';
+
+    const seo = PUBLIC_ROUTE_SEO[currentPath] || {
+      title: isPrivate ? 'Dashboard | CreatoKite' : 'CreatoKite | UGC Agency & Creator Community Platform',
+      description: isPrivate
+        ? 'CreatoKite private authenticated workspace and dashboard.'
+        : 'CreatoKite connects brands and creator communities for high-impact UGC campaigns and creator discovery.',
+      keywords: 'CreatoKite, UGC Platform, Creator Community, Brand Campaigns, UGC Agency India',
+      canonical: isPrivate ? null : `${SITE_URL}${currentPath}`,
+      noindex: isPrivate,
+      breadcrumb: isPrivate ? 'Dashboard' : 'Portal',
     };
 
     // 1. Update Document Title
@@ -64,29 +76,79 @@ export default function DynamicSEO() {
       element.setAttribute('content', content);
     };
 
-    // 3. Update Meta Description & Keywords
+    // 3. Update Meta Description, Keywords & Robots
     setMetaTag('meta[name="description"]', 'name', 'description', seo.description);
     setMetaTag('meta[name="keywords"]', 'name', 'keywords', seo.keywords);
+    setMetaTag(
+      'meta[name="robots"]',
+      'name',
+      'robots',
+      seo.noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+    );
 
     // 4. Update OpenGraph Tags
     setMetaTag('meta[property="og:title"]', 'property', 'og:title', seo.title);
     setMetaTag('meta[property="og:description"]', 'property', 'og:description', seo.description);
-    setMetaTag('meta[property="og:url"]', 'property', 'og:url', `https://creatokite.com${currentPath}`);
+    setMetaTag('meta[property="og:image"]', 'property', 'og:image', DEFAULT_OG_IMAGE);
+    setMetaTag('meta[property="og:site_name"]', 'property', 'og:site_name', 'CreatoKite');
+    if (seo.canonical) {
+      setMetaTag('meta[property="og:url"]', 'property', 'og:url', seo.canonical);
+    }
 
     // 5. Update Twitter Card Tags
     setMetaTag('meta[name="twitter:title"]', 'name', 'twitter:title', seo.title);
     setMetaTag('meta[name="twitter:description"]', 'name', 'twitter:description', seo.description);
+    setMetaTag('meta[name="twitter:image"]', 'name', 'twitter:image', DEFAULT_OG_IMAGE);
 
     // 6. Update Canonical Link
     let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonical);
+    if (seo.canonical) {
+      if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonical);
+      }
+      canonical.setAttribute('href', seo.canonical);
+    } else if (canonical && seo.noindex) {
+      canonical.remove();
     }
-    canonical.setAttribute('href', `https://creatokite.com${currentPath}`);
 
+    // 7. Inject Route BreadcrumbList Structured Data for Non-Home public pages
+    const breadcrumbScriptId = 'dynamic-breadcrumb-jsonld';
+    let breadcrumbEl = document.getElementById(breadcrumbScriptId);
+
+    if (!seo.noindex && currentPath !== '/' && seo.canonical) {
+      const breadcrumbData = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+          {
+            '@type': 'ListItem',
+            'position': 1,
+            'name': 'Home',
+            'item': `${SITE_URL}/`,
+          },
+          {
+            '@type': 'ListItem',
+            'position': 2,
+            'name': seo.breadcrumb || 'Page',
+            'item': seo.canonical,
+          },
+        ],
+      };
+
+      if (!breadcrumbEl) {
+        breadcrumbEl = document.createElement('script');
+        breadcrumbEl.id = breadcrumbScriptId;
+        breadcrumbEl.type = 'application/ld+json';
+        document.head.appendChild(breadcrumbEl);
+      }
+      breadcrumbEl.textContent = JSON.stringify(breadcrumbData);
+    } else if (breadcrumbEl) {
+      breadcrumbEl.remove();
+    }
   }, [location.pathname]);
 
   return null;
 }
+

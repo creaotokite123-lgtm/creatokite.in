@@ -1,6 +1,6 @@
 {
-  "name": "Creatokite — AI UGC Agency & Creator Campaign OS",
-  "short_name": "Creatokite",
+  "name": "CreatoKite — UGC Agency, Brand & Creator Community Platform",
+  "short_name": "CreatoKite",
   "icons": [
     {
       "src": "/logo.png",
@@ -18,3 +18,4 @@
   "display": "standalone",
   "start_url": "/"
 }
+

@@ -77,7 +77,7 @@ export default function Leaderboard() {
       <div className="flex-between">
         <div>
           <h2 style={{ fontWeight:800, fontSize:24, color: 'var(--t1)', marginBottom:4, display:'flex', alignItems:'center', gap:10, flexWrap: 'wrap' }}>
-            <span style={{ fontFamily:"var(--fh)", fontWeight:800, fontSize:32, letterSpacing:'-0.02em', color:'var(--t1)' }}>Creatokite Leaderboards</span>
+            <span style={{ fontFamily:"var(--fh)", fontWeight:800, fontSize:32, letterSpacing:'-0.02em', color:'var(--t1)' }}>CreatoKite Leaderboards</span>
             <span style={{ fontSize: 10, padding: '3px 10px', borderRadius: 99, background: 'rgba(230,95,43,0.12)', color: 'var(--acc)', fontWeight: 800, letterSpacing: 0.5, border: '1px solid rgba(230,95,43,0.25)' }}>
               TOP 10
             </span>

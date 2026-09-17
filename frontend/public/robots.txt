@@ -1,17 +1,35 @@
-# https://www.robotstxt.org/robotstxt.html
+# CreatoKite Official Robots.txt
+# https://www.creatokite.in/sitemap.xml
+
+User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: Bingbot
+User-agent: DuckDuckBot
+User-agent: YandexBot
+User-agent: Baiduspider
 User-agent: *
 Allow: /
 Allow: /login
 Allow: /register
 Allow: /opportunities
-Allow: /knowledge
-Allow: /leaderboard
+Allow: /assets/
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.svg$
+Allow: /*.webp$
 
-# Disallow Private Internal APIs & System Routes
+# Disallow Private Internal APIs, Auth callbacks, and Protected System Routes
 Disallow: /api/
 Disallow: /admin/
 Disallow: /superadmin/
 Disallow: /team/
+Disallow: /creator/
+Disallow: /brand/
+Disallow: /login-success
 
-# Sitemap Location
-Sitemap: https://creatokite.com/sitemap.xml
+# Host & Sitemap Location
+Host: https://www.creatokite.in
+Sitemap: https://www.creatokite.in/sitemap.xml
+
+
