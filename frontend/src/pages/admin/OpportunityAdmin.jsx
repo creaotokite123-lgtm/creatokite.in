@@ -257,6 +257,7 @@ export default function OpportunityAdmin() {
               <input
                 type="date"
                 value={form.deadline}
+                min={new Date().toISOString().split('T')[0]}
                 onChange={(e) => setForm({ ...form, deadline: e.target.value })}
                 className="form-input"
               />

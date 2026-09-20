@@ -1,10 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { ecosystemAPI } from '../../api';
-import { PageLoader, Btn, StatusBadge, Input, Textarea, renderTextWithLinks } from '../../components/ui';
+import { PageLoader, Btn, StatusBadge, Input, Textarea, renderTextWithLinks, getFriendlyLinkInfo } from '../../components/ui';
 import toast from 'react-hot-toast';
-import { Target, Award, Play, AlertCircle, Calendar, LayoutGrid, RefreshCw, Trophy } from 'lucide-react';
+import { Target, Award, Play, AlertCircle, Calendar, LayoutGrid, RefreshCw, Trophy, ChevronDown, Check, Lightbulb } from 'lucide-react';
 import CreatorShell from './CreatorShell';
+
+const ACTIVITY_TABS = [
+  { key: 'daily', label: 'Daily Activities', Icon: LayoutGrid, emoji: null, desc: 'Quick daily missions, check-ins, and quizzes' },
+  { key: 'weekly', label: 'Weekly Tasks', Icon: RefreshCw, emoji: null, desc: 'Weekly milestones and continuous creator progress' },
+  { key: 'monthly', label: 'Monthly Championships', Icon: Trophy, emoji: null, desc: 'Major competitions with high XP and prize pools' },
+  { key: 'challenges', label: 'Special Challenges', Icon: null, emoji: '🔥', desc: 'Limited-time sponsored events and bonus challenges' },
+];
 
 function decodeHTML(str) {
   if (!str) return '';
@@ -16,18 +23,25 @@ function decodeHTML(str) {
     .replace(/&gt;/g, '>');
 }
 
-function parseDescriptionToBullets(rawText) {
-  if (!rawText) return { intro: '', bullets: [], links: [] };
-  let text = decodeHTML(rawText);
+function parseDescriptionToBullets(rawText, targetUrl) {
+  if (!rawText && !targetUrl) return { intro: '', bullets: [], links: [] };
+  let text = decodeHTML(rawText || '');
 
-  // Extract URLs
-  const urlRegex = /(https?:\/\/[^\s]+)/gi;
-  const links = [];
-  text = text.replace(urlRegex, (match) => {
-    const cleanUrl = match.replace(/[.,;!?]+$/, '');
-    links.push(cleanUrl);
-    return '';
+  // Extract all URLs from text and targetUrl without destroying the original text
+  const urlRegex = /(https?:\/\/[^\s<]+|mailto:[^\s<]+)/gi;
+  const linksSet = new Set();
+
+  if (targetUrl && typeof targetUrl === 'string' && targetUrl.trim()) {
+    linksSet.add(targetUrl.trim());
+  }
+
+  const matches = text.match(urlRegex) || [];
+  matches.forEach(m => {
+    const cleanUrl = m.replace(/[.,;!?)]+$/, '').trim();
+    if (cleanUrl) linksSet.add(cleanUrl);
   });
+
+  const links = Array.from(linksSet);
 
   text = text.trim();
 
@@ -50,22 +64,22 @@ function parseDescriptionToBullets(rawText) {
     let cleaned = seg.replace(/^[•\-\*\d\.\s\t]+/, '').trim();
     if (!cleaned) return;
 
-    if (i === 0 && !seg.match(/^[✨🚀🎁💛🌟🔗⌛🎯⚡👇👉•\-]/) && cleaned.length > 15) {
+    if (i === 0 && !seg.match(/^[✨🚀🎁💛🌟🔗⌛🎯⚡👇👉•\-]/) && cleaned.length > 15 && segments.length > 1) {
       intro = cleaned;
     } else {
       bullets.push(cleaned);
     }
   });
 
-  if (!intro && bullets.length > 0) {
+  if (!intro && bullets.length > 0 && bullets.length <= 2 && bullets[0].length > 30) {
     intro = bullets.shift();
   }
 
   return { intro, bullets, links };
 }
 
-function FormattedBulletDescription({ text, isCompact = false, onShowMore }) {
-  const { intro, bullets, links } = parseDescriptionToBullets(text);
+function FormattedBulletDescription({ text, targetUrl, isCompact = false, onShowMore }) {
+  const { intro, bullets, links } = parseDescriptionToBullets(text, targetUrl);
   const displayBullets = isCompact ? bullets.slice(0, 3) : bullets;
 
   return (
@@ -101,36 +115,52 @@ function FormattedBulletDescription({ text, isCompact = false, onShowMore }) {
         </div>
       )}
 
+      {/* Action / Target Links Button Pills */}
       {links.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
-          {links.map((link, idx) => (
-            <a
-              key={idx}
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={e => e.stopPropagation()}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '6px 12px',
-                borderRadius: 8,
-                background: 'rgba(230,95,43,0.1)',
-                border: '1px solid rgba(230,95,43,0.25)',
-                color: 'var(--acc)',
-                fontSize: 11.5,
-                fontWeight: 700,
-                textDecoration: 'none',
-                transition: 'all 0.2s',
-                wordBreak: 'break-all'
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(230,95,43,0.18)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'rgba(230,95,43,0.1)'}
-            >
-              🔗 {link.length > 35 ? link.substring(0, 35) + '...' : link} ↗
-            </a>
-          ))}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8, paddingTop: 4 }}>
+          {links.map((link, idx) => {
+            const { label, url } = getFriendlyLinkInfo(link);
+            const isInternal = link.startsWith('/') && !link.startsWith('//');
+            return (
+              <a
+                key={idx}
+                href={url || link}
+                target={isInternal ? '_self' : '_blank'}
+                rel={isInternal ? undefined : 'noopener noreferrer'}
+                onClick={e => e.stopPropagation()}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '7px 14px',
+                  borderRadius: 10,
+                  background: 'rgba(230,95,43,0.12)',
+                  border: '1px solid rgba(230,95,43,0.3)',
+                  color: 'var(--acc, #E65F2B)',
+                  fontSize: 12,
+                  fontWeight: 750,
+                  textDecoration: 'none',
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                  boxShadow: '0 2px 8px rgba(230,95,43,0.12)'
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'var(--acc, #E65F2B)';
+                  e.currentTarget.style.color = '#ffffff';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 4px 14px rgba(230,95,43,0.25)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'rgba(230,95,43,0.12)';
+                  e.currentTarget.style.color = 'var(--acc, #E65F2B)';
+                  e.currentTarget.style.transform = 'none';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(230,95,43,0.12)';
+                }}
+              >
+                <span>{label || '🔗 Open Link'}</span>
+                <span>↗</span>
+              </a>
+            );
+          })}
         </div>
       )}
 
@@ -163,13 +193,25 @@ export default function Activities() {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('daily');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedAct, setSelectedAct] = useState(null);
   const [detailAct, setDetailAct] = useState(null);
+  const dropdownRef = useRef(null);
 
   const [url, setUrl] = useState('');
   const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (detailAct || showModal) {
@@ -225,6 +267,9 @@ export default function Activities() {
     return a.type === filter && !a.isChallenge;
   });
 
+  const currentTab = ACTIVITY_TABS.find(t => t.key === filter) || ACTIVITY_TABS[0];
+  const CurrentIcon = currentTab.Icon;
+
   return (
     <CreatorShell style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Header Banner */}
@@ -265,41 +310,161 @@ export default function Activities() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="rs-chip-row" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 6, borderBottom: '1px solid var(--border)', flexWrap: 'nowrap' }}>
-        {[
-          { key: 'daily', label: 'Daily Activities', Icon: LayoutGrid, emoji: null },
-          { key: 'weekly', label: 'Weekly Tasks', Icon: RefreshCw, emoji: null },
-          { key: 'monthly', label: 'Monthly Championships', Icon: Trophy, emoji: null },
-          { key: 'challenges', label: 'Special Challenges', Icon: null, emoji: '🔥' },
-        ].map(({ key: k, label: l, Icon, emoji }) => (
-          <button key={k} onClick={() => setFilter(k)}
-            className={`chip${filter === k ? ' active' : ''}`}
-            style={{
-              fontSize: 12,
-              padding: '8px 16px',
-              borderRadius: 10,
-              background: filter === k ? 'var(--acc)' : 'var(--s1)',
-              color: filter === k ? '#FFFFFF' : 'var(--t2)',
-              border: filter === k ? '1px solid var(--acc)' : '1px solid var(--border)',
-              fontWeight: 600,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              transition: 'all 0.2s',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-            }}
-            onMouseEnter={e => { if (filter !== k) e.currentTarget.style.background = 'rgba(255,107,87,0.08)'; }}
-            onMouseLeave={e => { if (filter !== k) e.currentTarget.style.background = 'var(--s1)'; }}
-          >
-            {emoji
-              ? <span style={{ fontSize: 14 }}>{emoji}</span>
-              : <Icon size={13} />
-            }
-            {l}
-          </button>
-        ))}
+      {/* Activity Category Dropdown */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <div ref={dropdownRef} style={{ position: 'relative', width: '100%', maxWidth: 320 }}>
+            <button
+              type="button"
+              onClick={() => setDropdownOpen(o => !o)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 12,
+                width: '100%',
+                padding: '9px 14px',
+                borderRadius: 12,
+                background: 'var(--s1, #161822)',
+                border: dropdownOpen ? '1.5px solid var(--acc, #E65F2B)' : '1px solid var(--border)',
+                color: 'var(--t1)',
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: 'pointer',
+                boxShadow: dropdownOpen ? '0 0 0 3px rgba(230,95,43,0.15)' : 'none',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 8,
+                  background: 'rgba(230, 95, 43, 0.15)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--acc, #E65F2B)'
+                }}>
+                  {currentTab.emoji ? (
+                    <span style={{ fontSize: 14 }}>{currentTab.emoji}</span>
+                  ) : (
+                    <CurrentIcon size={14} />
+                  )}
+                </div>
+                <span style={{ fontSize: 13.5, fontWeight: 750 }}>{currentTab.label}</span>
+              </div>
+              <ChevronDown size={14} style={{ transform: dropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', color: 'var(--t3)' }} />
+            </button>
+
+            {/* Dropdown Menu */}
+            {dropdownOpen && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 6px)',
+                  left: 0,
+                  zIndex: 100,
+                  width: '100%',
+                  minWidth: 280,
+                  maxHeight: 360,
+                  overflowY: 'auto',
+                  background: 'var(--s1, #161822)',
+                  border: '1px solid var(--border, rgba(255,255,255,0.12))',
+                  borderRadius: 14,
+                  boxShadow: '0 16px 36px rgba(0,0,0,0.45)',
+                  padding: 6,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 2,
+                  animation: 'fadeIn 0.15s ease-out'
+                }}
+              >
+                <div style={{ padding: '6px 10px', fontSize: 10.5, fontWeight: 700, color: 'var(--t3)', textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid var(--border)' }}>
+                  Activity Category
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, paddingTop: 4 }}>
+                  {ACTIVITY_TABS.map(t => {
+                    const isSelected = filter === t.key;
+                    const TabIcon = t.Icon;
+                    const count = activities.filter(a => (t.key === 'challenges' ? a.isChallenge : (a.type === t.key && !a.isChallenge))).length;
+                    return (
+                      <div
+                        key={t.key}
+                        onClick={() => {
+                          setFilter(t.key);
+                          setDropdownOpen(false);
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '8px 10px',
+                          borderRadius: 10,
+                          cursor: 'pointer',
+                          background: isSelected ? 'rgba(230, 95, 43, 0.12)' : 'transparent',
+                          color: isSelected ? 'var(--t1)' : 'var(--t2)',
+                          border: isSelected ? '1px solid rgba(230,95,43,0.3)' : '1px solid transparent',
+                          transition: 'background 0.12s'
+                        }}
+                        onMouseEnter={e => !isSelected && (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                        onMouseLeave={e => !isSelected && (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{
+                            width: 26,
+                            height: 26,
+                            borderRadius: 7,
+                            background: isSelected ? 'rgba(230,95,43,0.2)' : 'rgba(255,255,255,0.05)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: isSelected ? 'var(--acc, #E65F2B)' : 'var(--t3)',
+                            flexShrink: 0
+                          }}>
+                            {t.emoji ? (
+                              <span style={{ fontSize: 13 }}>{t.emoji}</span>
+                            ) : (
+                              <TabIcon size={13} />
+                            )}
+                          </div>
+                          <div>
+                            <div style={{ fontSize: 12.5, fontWeight: isSelected ? 800 : 600, color: isSelected ? 'var(--acc, #E65F2B)' : 'var(--t1)' }}>
+                              {t.label}
+                            </div>
+                            <div style={{ fontSize: 10.5, color: 'var(--t3)', lineHeight: 1.2, marginTop: 1 }}>
+                              {t.desc}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{
+                            fontSize: 10,
+                            padding: '1px 6px',
+                            borderRadius: 99,
+                            background: isSelected ? 'var(--acc)' : 'rgba(255,255,255,0.06)',
+                            color: isSelected ? '#ffffff' : 'var(--t3)',
+                            fontWeight: 700
+                          }}>
+                            {count}
+                          </span>
+                          {isSelected && (
+                            <span style={{ color: 'var(--acc, #E65F2B)', fontWeight: 900, fontSize: 13 }}>✓</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <p style={{ color: 'var(--t2)', fontSize: 12, margin: 0, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Lightbulb size={13} color="var(--gold)" />
+          {currentTab?.desc}
+        </p>
       </div>
 
       {/* Activities Grid */}
@@ -365,6 +530,7 @@ export default function Activities() {
                 {/* Formatted description with bullet points */}
                 <FormattedBulletDescription
                   text={act.description}
+                  targetUrl={act.targetUrl}
                   isCompact={true}
                   onShowMore={() => setDetailAct(act)}
                 />
@@ -457,7 +623,7 @@ export default function Activities() {
             <div style={{ marginBottom: 24 }}>
               <h4 style={{ fontSize: 12, fontWeight: 700, color: 'var(--t3)', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 }}>Guidelines & Requirements</h4>
               <div style={{ background: 'rgba(74,62,61,0.03)', padding: 18, borderRadius: 16, border: '1px solid var(--border)' }}>
-                <FormattedBulletDescription text={detailAct.description} isCompact={false} />
+                <FormattedBulletDescription text={detailAct.description} targetUrl={detailAct.targetUrl} isCompact={false} />
               </div>
             </div>
 
@@ -545,7 +711,7 @@ export default function Activities() {
                   <AlertCircle size={13} color="var(--acc)" />
                   Requirements & Guidelines
                 </div>
-                <FormattedBulletDescription text={selectedAct.description} isCompact={false} />
+                <FormattedBulletDescription text={selectedAct.description} targetUrl={selectedAct.targetUrl} isCompact={false} />
               </div>
 
               {/* Submission URL Field */}

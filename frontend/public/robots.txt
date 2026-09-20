@@ -9,6 +9,10 @@ User-agent: YandexBot
 User-agent: Baiduspider
 User-agent: *
 Allow: /
+Allow: /blog
+Allow: /privacy
+Allow: /security
+Allow: /terms
 Allow: /login
 Allow: /register
 Allow: /opportunities

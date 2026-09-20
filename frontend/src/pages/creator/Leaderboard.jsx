@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { ecosystemAPI } from '../../api';
 import { PageLoader, Avatar, Btn } from '../../components/ui';
 import {
   Trophy, Shield, Zap, Sparkles, MessageSquare, Star,
-  Dumbbell, Target, Gem, GraduationCap, Users, Lightbulb
+  Dumbbell, Target, Gem, GraduationCap, Users, Lightbulb,
+  ChevronDown, Check
 } from 'lucide-react';
 import CreatorShell from './CreatorShell';
 
@@ -28,9 +29,21 @@ export default function Leaderboard() {
   const [creators, setCreators] = useState([]);
   const [hof, setHof]             = useState(null);
   const [tab, setTab]             = useState('influence');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [page, setPage]           = useState(1);
   const [totalPages, setTotalPages]= useState(1);
   const [loading, setLoading]     = useState(true);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const fetchLeaderboards = () => {
     setLoading(true);
@@ -92,7 +105,7 @@ export default function Leaderboard() {
           <h3 style={{ fontSize:12, fontWeight:700, color:'var(--t3)', display:'flex', alignItems:'center', gap:6, textTransform: 'uppercase', letterSpacing: 0.5 }}>
             <Sparkles size={15} color="var(--gold)" /> Hall of Fame
           </h3>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))', gap:16 }}>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(2, minmax(0, 1fr))', gap:14 }} className="hof-grid-2x2">
             {[
               { title: 'Top Creator of Month', data: hof.topCreatorOfMonth, score: `${hof.topCreatorOfMonth?.reputationScore || 85}% Reputation`, icon: Star, color: 'var(--gold)' },
               { title: 'Highest XP Master', data: hof.topXP, score: `${hof.topXP?.xp || 0} XP`, icon: Zap, color: 'var(--p)' },
@@ -105,17 +118,17 @@ export default function Leaderboard() {
                 WebkitBackdropFilter:'var(--glass-blur)',
                 border:'1px solid var(--glass-border)',
                 borderRadius:16,
-                padding:'16px 18px',
+                padding:'14px 16px',
                 display:'flex',
                 alignItems:'center',
-                gap:14,
+                gap:12,
                 boxShadow:'var(--glass-shadow)',
                 transition:'transform 0.2s ease',
               }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'none'; }}
               >
-                <div style={{ width:38, height:38, borderRadius:'50%', background:`${color}12`, border:`1px solid ${color}25`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <div style={{ width:36, height:36, borderRadius:'50%', background:`${color}12`, border:`1px solid ${color}25`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                   <Icon size={16} color={color} />
                 </div>
                 <div style={{ minWidth:0, flex: 1 }}>
@@ -131,42 +144,147 @@ export default function Leaderboard() {
         </div>
       )}
 
-      {/* Leaderboard Category Tabs */}
-      <div className="rs-chip-row" style={{ display:'flex', gap:8, overflowX:'auto', paddingBottom:6, borderBottom:'1px solid var(--border)', flexWrap: 'nowrap' }}>
-        {TABS.map(t => (
-          <button key={t.key} onClick={() => selectTab(t.key)}
-            className={`chip${tab === t.key ? ' active' : ''}`}
-            style={{
-              fontSize:12,
-              padding:'8px 14px',
-              borderRadius:10,
-              background: tab === t.key ? 'var(--acc)' : 'var(--s1)',
-              color: tab === t.key ? '#FFFFFF' : 'var(--t2)',
-              border: tab === t.key ? '1px solid var(--acc)' : '1px solid var(--border)',
-              fontWeight: 600,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              transition: 'all 0.2s',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-            }}
-            onMouseEnter={e => { if(tab !== t.key) e.currentTarget.style.background = 'rgba(255,107,87,0.08)'; }}
-            onMouseLeave={e => { if(tab !== t.key) e.currentTarget.style.background = 'var(--s1)'; }}
-          >
-            {t.key === 'influence'
-              ? <span style={{ fontSize:13 }}>⭐</span>
-              : <t.Icon size={13} />
-            }
-            {t.label}
-          </button>
-        ))}
-      </div>
+      {/* Leaderboard Category Dropdown */}
+      {(() => {
+        const currentTab = TABS.find(t => t.key === tab) || TABS[0];
+        const CurrentIcon = currentTab.Icon;
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+              <div ref={dropdownRef} style={{ position: 'relative', width: '100%', maxWidth: 300 }}>
+                <button
+                  type="button"
+                  onClick={() => setDropdownOpen(o => !o)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 12,
+                    width: '100%',
+                    padding: '9px 14px',
+                    borderRadius: 12,
+                    background: 'var(--s1, #161822)',
+                    border: dropdownOpen ? '1.5px solid var(--acc, #E65F2B)' : '1px solid var(--border)',
+                    color: 'var(--t1)',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    boxShadow: dropdownOpen ? '0 0 0 3px rgba(230,95,43,0.15)' : 'none',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 8,
+                      background: 'rgba(230, 95, 43, 0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'var(--acc, #E65F2B)'
+                    }}>
+                      {currentTab.key === 'influence' ? '⭐' : <CurrentIcon size={14} />}
+                    </div>
+                    <span style={{ fontSize: 13.5, fontWeight: 750 }}>{currentTab.label}</span>
+                  </div>
+                  <ChevronDown size={14} style={{ transform: dropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', color: 'var(--t3)' }} />
+                </button>
 
-      <p style={{ color:'var(--t2)', fontSize:12, marginTop:-12, fontWeight: 500, display:'flex', alignItems:'center', gap:6 }}>
-        <Lightbulb size={13} color="var(--gold)" />
-        {TABS.find(t => t.key === tab)?.desc}
-      </p>
+                {/* Dropdown Menu */}
+                {dropdownOpen && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 6px)',
+                      left: 0,
+                      zIndex: 100,
+                      width: '100%',
+                      minWidth: 280,
+                      maxHeight: 360,
+                      overflowY: 'auto',
+                      background: 'var(--s1, #161822)',
+                      border: '1px solid var(--border, rgba(255,255,255,0.12))',
+                      borderRadius: 14,
+                      boxShadow: '0 16px 36px rgba(0,0,0,0.45)',
+                      padding: 6,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 2,
+                      animation: 'fadeIn 0.15s ease-out'
+                    }}
+                  >
+                    <div style={{ padding: '6px 10px', fontSize: 10.5, fontWeight: 700, color: 'var(--t3)', textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid var(--border)' }}>
+                      Select Category
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 2, paddingTop: 4 }}>
+                      {TABS.map(t => {
+                        const isSelected = tab === t.key;
+                        const TabIcon = t.Icon;
+                        return (
+                          <div
+                            key={t.key}
+                            onClick={() => {
+                              selectTab(t.key);
+                              setDropdownOpen(false);
+                            }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '8px 10px',
+                              borderRadius: 10,
+                              cursor: 'pointer',
+                              background: isSelected ? 'rgba(230, 95, 43, 0.12)' : 'transparent',
+                              color: isSelected ? 'var(--t1)' : 'var(--t2)',
+                              border: isSelected ? '1px solid rgba(230,95,43,0.3)' : '1px solid transparent',
+                              transition: 'background 0.12s'
+                            }}
+                            onMouseEnter={e => !isSelected && (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                            onMouseLeave={e => !isSelected && (e.currentTarget.style.background = 'transparent')}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                              <div style={{
+                                width: 26,
+                                height: 26,
+                                borderRadius: 7,
+                                background: isSelected ? 'rgba(230,95,43,0.2)' : 'rgba(255,255,255,0.05)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: isSelected ? 'var(--acc, #E65F2B)' : 'var(--t3)',
+                                flexShrink: 0
+                              }}>
+                                {t.key === 'influence' ? '⭐' : <TabIcon size={13} />}
+                              </div>
+                              <div>
+                                <div style={{ fontSize: 12.5, fontWeight: isSelected ? 800 : 600, color: isSelected ? 'var(--acc, #E65F2B)' : 'var(--t1)' }}>
+                                  {t.label}
+                                </div>
+                                <div style={{ fontSize: 10.5, color: 'var(--t3)', lineHeight: 1.2, marginTop: 1 }}>
+                                  {t.desc}
+                                </div>
+                              </div>
+                            </div>
+                            {isSelected && (
+                              <span style={{ color: 'var(--acc, #E65F2B)', fontWeight: 900, fontSize: 13 }}>✓</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <p style={{ color:'var(--t2)', fontSize:12, margin:0, fontWeight: 500, display:'flex', alignItems:'center', gap:6 }}>
+              <Lightbulb size={13} color="var(--gold)" />
+              {currentTab?.desc}
+            </p>
+          </div>
+        );
+      })()}
 
       {/* Logged in creator Top 10 status banner */}
       {user && (() => {
@@ -242,7 +360,7 @@ export default function Leaderboard() {
 
               return (
                 <div key={c._id} style={{
-                  display:'flex', alignItems:'center', gap:16, padding:'16px 20px',
+                  display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px',
                   margin: isMe ? '4px 6px' : '0',
                   borderRadius: isMe ? 14 : 0,
                   borderBottom: (!isMe && i < creators.length - 1) ? '1px solid var(--border)' : 'none',
@@ -260,52 +378,54 @@ export default function Leaderboard() {
                 onMouseLeave={e => { if(!isMe) e.currentTarget.style.background = 'transparent'; }}
                 >
                   {/* Rank badge */}
-                  <div style={{ width:32, textAlign:'center', flexShrink:0, display:'flex', justifyContent:'center' }}>
+                  <div style={{ width: 24, textAlign: 'center', flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     {globalRank <= 3 ? (
-                      <span style={{ fontSize:20 }}>
+                      <span style={{ fontSize: 17 }}>
                         {globalRank===1?'🥇':globalRank===2?'🥈':'🥉'}
                       </span>
                     ) : (
-                      <span style={{ fontFamily:'var(--fd)', fontWeight:800, fontSize:13, color: isMe ? 'var(--acc)' : 'var(--t3)' }}>
+                      <span style={{ fontFamily: 'var(--fd)', fontWeight: 800, fontSize: 12, color: isMe ? 'var(--acc)' : 'var(--t3)' }}>
                         #{globalRank}
                       </span>
                     )}
                   </div>
                   
-                  <Avatar src={c.avatar} name={c.displayName} size={40} style={isMe ? { border: '2px solid var(--acc)' } : {}} />
+                  <Avatar src={c.avatar} name={c.displayName} size={36} style={{ flexShrink: 0, ...(isMe ? { border: '2px solid var(--acc)' } : {}) }} />
                   
                   <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <div style={{ fontWeight: 700, fontSize: 15, display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--fh)', color: 'var(--t1)' }}>
+                    <div style={{ fontWeight: 750, fontSize: 14, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', fontFamily: 'var(--fh)', color: 'var(--t1)', lineHeight: 1.25 }}>
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.displayName}</span>
                       {isMe && (
                         <span style={{
-                          fontSize: 9,
+                          fontSize: 8.5,
                           fontWeight: 800,
-                          padding: '2px 8px',
+                          padding: '1px 6px',
                           borderRadius: 99,
                           background: 'var(--acc)',
                           color: '#ffffff',
-                          letterSpacing: 0.5,
-                          boxShadow: '0 2px 8px rgba(230,95,43,0.35)',
+                          letterSpacing: 0.3,
+                          boxShadow: '0 2px 6px rgba(230,95,43,0.3)',
                           flexShrink: 0,
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: 3
+                          gap: 2
                         }}>
                           ✨ YOU
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: 11, color: isMe ? 'var(--t1)' : 'var(--t2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: isMe ? 600 : 500 }}>
-                      {c.niche || 'General'} · Level {c.level || 1} · {c.completedCampaigns || 0} campaigns
+                    <div style={{ fontSize: 11, color: isMe ? 'var(--t1)' : 'var(--t3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: isMe ? 600 : 500 }}>
+                      {c.niche || 'General'}{c.level ? ` · Lvl ${c.level}` : ''}{c.completedCampaigns ? ` · ${c.completedCampaigns} gigs` : ''}
                     </div>
                   </div>
                   
-                  <div style={{ textAlign:'right' }}>
-                    <div style={{ fontFamily:'var(--fd)', fontWeight:800, fontSize:15, color: isMe ? 'var(--acc)' : 'var(--t1)' }}>
+                  <div style={{ textAlign: 'right', flexShrink: 0, minWidth: 'fit-content' }}>
+                    <div style={{ fontFamily: 'var(--fd)', fontWeight: 800, fontSize: 14, color: isMe ? 'var(--acc)' : 'var(--t1)', whiteSpace: 'nowrap' }}>
                       {getMetricDisplay(c)}
                     </div>
-                    <div style={{ fontSize:10, color: isMe ? 'var(--acc)' : 'var(--t3)', fontWeight:700, marginTop:2, textTransform: 'uppercase', letterSpacing: 0.3 }}>Rank #{globalRank}</div>
+                    <div style={{ fontSize: 9.5, color: isMe ? 'var(--acc)' : 'var(--t3)', fontWeight: 700, marginTop: 2, textTransform: 'uppercase', letterSpacing: 0.3 }}>
+                      Rank #{globalRank}
+                    </div>
                   </div>
                 </div>
               );

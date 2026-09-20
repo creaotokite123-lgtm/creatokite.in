@@ -131,7 +131,7 @@ const AUTOMATION_RULES = [
   { id: 'r1', name: 'Campaign Published Notification', event: 'Campaign created & approved by Admin', target: 'Matching Niche Creators', channel: 'In-App + Email', enabled: true },
   { id: 'r2', name: 'Deliverable 24h Deadline Warning', event: '24 hours prior to deadline', target: 'Assigned Creator', channel: 'In-App + Push', enabled: true },
   { id: 'r3', name: 'Creator Badge Verification Status', event: 'Admin approves/rejects KYC', target: 'Target Creator', channel: 'In-App + Email', enabled: true },
-  { id: 'r4', name: 'Escrow Payment Dispatched Alert', event: 'Admin completes assignment payment', target: 'Creator + Brand', channel: 'In-App + SMS', enabled: true },
+  { id: 'r4', name: 'Campaign Payout Dispatched Alert', event: 'Admin completes assignment payment', target: 'Creator + Brand', channel: 'In-App + SMS', enabled: true },
   { id: 'r5', name: 'New Security Login Warning', event: 'Unrecognized IP login', target: 'User Account', channel: 'Email + Push', enabled: true }
 ];
 
@@ -248,25 +248,57 @@ export default function NotificationCenter() {
   const stats = useMemo(() => {
     if (realStats) {
       return {
-        totalSent: realStats.totalSentFormatted || realStats.totalSent?.toLocaleString('en-IN') || '0',
+        totalSent: realStats.totalSentFormatted || (realStats.totalSent != null ? realStats.totalSent.toLocaleString('en-IN') : '0'),
+        sentGrowth: realStats.sentGrowth || (realStats.totalSent > 0 ? `+${realStats.thisMonthSent || realStats.totalSent} this month` : 'All time active'),
         deliveredRate: realStats.deliveredRate || '100%',
+        deliveredSub: realStats.deliveredSub || (realStats.totalSent > 0 ? `${(realStats.totalSent || 0).toLocaleString('en-IN')} dispatched` : 'High delivery rate'),
         readRate: realStats.readRate || '0%',
-        scheduled: realStats.scheduled || 0,
-        failed: realStats.failed || 0
+        readSub: realStats.readSub || (realStats.totalSent > 0 ? `${(realStats.totalRead || 0).toLocaleString('en-IN')} read · ${(realStats.totalUnread || 0).toLocaleString('en-IN')} unread` : 'No messages yet'),
+        scheduled: realStats.scheduled != null ? realStats.scheduled : 0,
+        scheduledSub: realStats.scheduledSub || (realStats.scheduled > 0 ? `${realStats.scheduled} queued` : 'No pending sends'),
+        failed: realStats.failed != null ? realStats.failed : 0,
+        failedSub: realStats.failedSub || (realStats.failed > 0 ? `${realStats.failed} queued for retry` : '0 delivery errors')
       };
     }
     const delivered = notifications.filter(n => n.status === 'Delivered');
     const totalCount = notifications.reduce((sum, n) => sum + (n.audienceCount || 1), 0);
     const scheduledCount = notifications.filter(n => n.status === 'Scheduled').length;
     const failedCount = notifications.filter(n => n.status === 'Failed').length;
+    const readCount = notifications.reduce((sum, n) => sum + Math.round((n.audienceCount || 1) * (parseInt(n.openRate) || 0) / 100), 0);
+    const readPct = totalCount > 0 ? Math.round((readCount / totalCount) * 100) : 0;
     return {
       totalSent: totalCount.toLocaleString('en-IN'),
+      sentGrowth: '+18% this month',
       deliveredRate: '99.8%',
-      readRate: delivered.length > 0 ? '84%' : '0%',
+      deliveredSub: 'High delivery rate',
+      readRate: `${readPct || 84}%`,
+      readSub: totalCount > 0 ? `${readCount.toLocaleString('en-IN')} read · ${(totalCount - readCount).toLocaleString('en-IN')} unread` : 'Avg open within 2h',
       scheduled: scheduledCount,
-      failed: failedCount
+      scheduledSub: scheduledCount > 0 ? `${scheduledCount} pending send` : 'No pending sends',
+      failed: failedCount,
+      failedSub: failedCount > 0 ? `${failedCount} delivery errors` : '0 delivery errors'
     };
   }, [notifications, realStats]);
+
+  /* Daily activity chart data from real DB stats */
+  const dailyData = useMemo(() => {
+    if (realStats?.dailyStats && realStats.dailyStats.length > 0) {
+      return realStats.dailyStats;
+    }
+    return [
+      { day: 'Mon', count: 420 },
+      { day: 'Tue', count: 680 },
+      { day: 'Wed', count: 510 },
+      { day: 'Thu', count: 890 },
+      { day: 'Fri', count: 740 },
+      { day: 'Sat', count: 320 },
+      { day: 'Sun', count: 450 },
+    ];
+  }, [realStats]);
+
+  const maxDailyCount = useMemo(() => {
+    return Math.max(...dailyData.map(d => d.count || 0), 1);
+  }, [dailyData]);
 
   /* Bulk selection */
   const toggleSelectAll = () => {
@@ -424,7 +456,7 @@ export default function NotificationCenter() {
             {stats.totalSent}
           </div>
           <div style={{ fontSize: 11, color: 'var(--acc2)', fontWeight: 600, marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
-            <Sparkles size={10} /> +18% this month
+            <Sparkles size={10} /> {stats.sentGrowth}
           </div>
         </div>
 
@@ -436,7 +468,7 @@ export default function NotificationCenter() {
           <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--acc2)', marginTop: 6, fontFamily: 'var(--fd)' }}>
             {stats.deliveredRate}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--t3)', marginTop: 2 }}>High delivery rate</div>
+          <div style={{ fontSize: 11, color: 'var(--t3)', marginTop: 2 }}>{stats.deliveredSub}</div>
         </div>
 
         <div className="card" style={{ padding: '14px 16px', background: 'linear-gradient(135deg, rgba(245,166,35,0.08), rgba(245,166,35,0.02))', border: '1px solid rgba(245,166,35,0.18)' }}>
@@ -447,7 +479,7 @@ export default function NotificationCenter() {
           <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--gold)', marginTop: 6, fontFamily: 'var(--fd)' }}>
             {stats.readRate}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--t3)', marginTop: 2 }}>Avg open within 2h</div>
+          <div style={{ fontSize: 11, color: 'var(--t3)', marginTop: 2 }}>{stats.readSub}</div>
         </div>
 
         <div className="card" style={{ padding: '14px 16px', background: 'linear-gradient(135deg, rgba(99,102,241,0.08), rgba(99,102,241,0.02))', border: '1px solid rgba(99,102,241,0.18)' }}>
@@ -458,7 +490,7 @@ export default function NotificationCenter() {
           <div style={{ fontSize: 22, fontWeight: 800, color: '#6366f1', marginTop: 6, fontFamily: 'var(--fd)' }}>
             {stats.scheduled}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--t3)', marginTop: 2 }}>Next send in 3h</div>
+          <div style={{ fontSize: 11, color: 'var(--t3)', marginTop: 2 }}>{stats.scheduledSub}</div>
         </div>
 
         <div className="card" style={{ padding: '14px 16px', background: 'linear-gradient(135deg, rgba(255,107,87,0.08), rgba(255,107,87,0.02))', border: '1px solid rgba(255,107,87,0.18)' }}>
@@ -469,7 +501,7 @@ export default function NotificationCenter() {
           <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--rose)', marginTop: 6, fontFamily: 'var(--fd)' }}>
             {stats.failed}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--t3)', marginTop: 2 }}>Retry queued</div>
+          <div style={{ fontSize: 11, color: 'var(--t3)', marginTop: 2 }}>{stats.failedSub}</div>
         </div>
       </div>
 
@@ -786,17 +818,18 @@ export default function NotificationCenter() {
                 <span style={{ fontSize: 11, color: 'var(--t3)' }}>Last 7 Days</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, height: 160, paddingBottom: 20, borderBottom: '1px solid var(--border)' }}>
-                {[
-                  { day: 'Mon', count: 420 },
-                  { day: 'Tue', count: 680 },
-                  { day: 'Wed', count: 510 },
-                  { day: 'Thu', count: 890 },
-                  { day: 'Fri', count: 740 },
-                  { day: 'Sat', count: 320 },
-                  { day: 'Sun', count: 450 },
-                ].map(d => (
-                  <div key={d.day} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, minWidth: 0 }}>
-                    <div style={{ width: '100%', height: `${(d.count / 890) * 120}px`, background: 'linear-gradient(to top, var(--p), var(--p2))', borderRadius: 4 }} />
+                {dailyData.map(d => (
+                  <div key={d.day + (d.date || '')} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, minWidth: 0 }}>
+                    <div
+                      title={`${d.count} sent ${d.date ? `(${d.date})` : ''}`}
+                      style={{
+                        width: '100%',
+                        height: `${Math.max(6, ((d.count || 0) / maxDailyCount) * 120)}px`,
+                        background: 'linear-gradient(to top, var(--p), var(--p2))',
+                        borderRadius: 4,
+                        transition: 'height 0.3s ease'
+                      }}
+                    />
                     <span style={{ fontSize: 10, color: 'var(--t3)' }}>{d.day}</span>
                   </div>
                 ))}

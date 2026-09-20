@@ -23,45 +23,48 @@ const CustomStatCard = ({ label, value, icon: Icon, color, trendText, iconBg }) 
   <div style={{
     background: 'var(--s1, #161311)',
     border: '1px solid var(--border)',
-    borderRadius: 20,
-    padding: '20px 22px',
+    borderRadius: 18,
+    padding: '16px 18px',
     boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: 10,
     position: 'relative',
     overflow: 'hidden',
     transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+    minWidth: 0,
   }} className="hover-lift">
     <div style={{
-      width: 38, height: 38, borderRadius: 12,
+      width: 36, height: 36, borderRadius: 10,
       background: iconBg || `${color}1A`, border: `1px solid ${color}30`,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
+      flexShrink: 0
     }}>
-      <Icon size={18} color={color} />
+      <Icon size={17} color={color} />
     </div>
-    <div>
-      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--t2)', marginBottom: 4 }}>
+    <div style={{ minWidth: 0 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--t2)', marginBottom: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
         {label}
       </div>
       <div style={{
         fontFamily: "'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif",
-        fontSize: 28,
-        fontWeight: 900,
+        fontSize: 'clamp(20px, 3.5vw, 26px)',
+        fontWeight: 800,
         color: 'var(--t1)',
+        letterSpacing: '-0.03em',
         lineHeight: 1.1,
-        letterSpacing: '-0.02em'
+        fontFeatureSettings: '"tnum" on, "lnum" on',
       }}>
         {value}
       </div>
+      {trendText && (
+        <div style={{ fontSize: 10.5, color: '#10B981', fontWeight: 600, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <TrendingUp size={11} />
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{trendText}</span>
+        </div>
+      )}
     </div>
-    {trendText && (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11.5, color: trendText.includes('vs') ? '#10b981' : 'var(--t3)', fontWeight: 700 }}>
-        {trendText.includes('vs') && <span style={{ fontSize: 13 }}>↗</span>}
-        <span>{trendText}</span>
-      </div>
-    )}
   </div>
 );
 
@@ -208,12 +211,12 @@ export default function CreatorDashboard() {
         </div>
       </div>
 
-      {/* Live Stats Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
-        <CustomStatCard label="Total Campaigns" value={data?.stats?.total ?? 0} icon={Target} color="#F97316" trendText={data?.stats?.totalTrendPct !== undefined ? `${data.stats.totalTrendPct >= 0 ? '+' : ''}${data.stats.totalTrendPct}% vs last month` : '⚡ Active campaigns'} iconBg="rgba(249, 115, 22, 0.14)" />
-        <CustomStatCard label="Completed" value={data?.stats?.completed ?? 0} icon={Trophy} color="#E65F2B" trendText={data?.stats?.completedTrendPct !== undefined ? `${data.stats.completedTrendPct >= 0 ? '+' : ''}${data.stats.completedTrendPct}% vs last month` : '✔ Completed campaigns'} iconBg="rgba(230, 95, 43, 0.14)" />
-        <CustomStatCard label="Total Earned" value={formatStatCurrency(data?.stats?.earned ?? 0)} icon={Wallet} color="#10B981" trendText={data?.stats?.earnedTrendPct !== undefined ? `${data.stats.earnedTrendPct >= 0 ? '+' : ''}${data.stats.earnedTrendPct}% vs last month` : '💰 Verified payout'} iconBg="rgba(16, 185, 129, 0.14)" />
-        <CustomStatCard label="Leaderboard Rank" value={leaderboardRank ? `#${leaderboardRank}` : '#—'} icon={Crown} color="#8B5CF6" trendText={leaderboardRank ? `Top #${leaderboardRank} Rank` : 'Complete campaigns to rank'} iconBg="rgba(139, 92, 246, 0.14)" />
+      {/* Live Stats 2x2 Grid */}
+      <div className="grid-2-mobile dashboard-stats grid-2-2x2" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12, width: '100%' }}>
+        <CustomStatCard label="Total Campaigns" value={data?.stats?.total ?? 0} icon={Target} color="#F97316" trendText={data?.stats?.totalTrendPct !== undefined ? `${data.stats.totalTrendPct >= 0 ? '+' : ''}${data.stats.totalTrendPct}% vs last month` : '⚡ Active'} iconBg="rgba(249, 115, 22, 0.14)" />
+        <CustomStatCard label="Completed" value={data?.stats?.completed ?? 0} icon={Trophy} color="#E65F2B" trendText={data?.stats?.completedTrendPct !== undefined ? `${data.stats.completedTrendPct >= 0 ? '+' : ''}${data.stats.completedTrendPct}% vs last month` : '✔ Done'} iconBg="rgba(230, 95, 43, 0.14)" />
+        <CustomStatCard label="Total Earned" value={formatStatCurrency(data?.stats?.earned ?? 0)} icon={Wallet} color="#10B981" trendText={data?.stats?.earnedTrendPct !== undefined ? `${data.stats.earnedTrendPct >= 0 ? '+' : ''}${data.stats.earnedTrendPct}% vs last month` : '💰 Payout'} iconBg="rgba(16, 185, 129, 0.14)" />
+        <CustomStatCard label="Leaderboard Rank" value={leaderboardRank ? `#${leaderboardRank}` : '#—'} icon={Crown} color="#8B5CF6" trendText={leaderboardRank ? `Top #${leaderboardRank}` : 'Complete tasks'} iconBg="rgba(139, 92, 246, 0.14)" />
       </div>
 
       {/* Newest Activity Card published by Admin */}

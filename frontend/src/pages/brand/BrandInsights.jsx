@@ -73,8 +73,8 @@ export default function BrandAnalytics() {
         </div>
       </div>
 
-      {/* Stats Cards Row */}
-      <div className="grid-4">
+      {/* Stats Cards 2x2 Grid */}
+      <div className="grid-2 dashboard-stats grid-2-mobile" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 14 }}>
         <StatCard label="Total Campaigns" value={s.totalCampaigns || 0}    icon={Megaphone}   color="var(--p2)" />
         <StatCard label="Active Campaigns" value={s.active || 0}            icon={Activity}    color="var(--acc2)" />
         <StatCard label="Completed Campaigns" value={s.completed || 0}      icon={Trophy}      color="var(--gold)" />
@@ -88,7 +88,7 @@ export default function BrandAnalytics() {
           <div className="card" style={{ padding: '22px 24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
               <TrendingUp size={16} style={{ color: 'var(--p)' }} />
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: '#fff', margin: 0 }}>Campaign Activity</h3>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--t1)', margin: 0 }}>Campaign Activity</h3>
             </div>
             <p style={{ fontSize: 11, color: 'var(--t2)', marginTop: -14, marginBottom: 20 }}>Monthly campaign deployment trend</p>
             <ResponsiveContainer width="100%" height={240}>
@@ -118,7 +118,7 @@ export default function BrandAnalytics() {
           <div className="card" style={{ padding: '22px 24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
               <PieChart size={16} style={{ color: 'var(--gold)' }} />
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: '#fff', margin: 0 }}>Niche Distribution</h3>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--t1)', margin: 0 }}>Niche Distribution</h3>
             </div>
             <p style={{ fontSize: 11, color: 'var(--t2)', marginTop: -14, marginBottom: 20 }}>Campaign volume split by niche focus</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>

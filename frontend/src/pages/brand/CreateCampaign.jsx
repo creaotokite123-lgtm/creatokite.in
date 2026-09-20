@@ -13,6 +13,7 @@ const GOALS = ['Brand Awareness', 'Product Launch', 'App Downloads', 'Website Tr
 const AUDIENCES = ['Gen Z (18-24)', 'Millennials (25-34)', 'Adults (35-44)', 'Pan India', 'Metro Cities', 'Tier 2 Cities', 'Students', 'Working Professionals'];
 
 const STEPS = ['Campaign Brief', 'Requirements', 'Budget & Timeline', 'Review'];
+const minDate = new Date().toISOString().split('T')[0];
 
 export default function CreateCampaign() {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ export default function CreateCampaign() {
     if (step === 0) return form.title && form.description && form.niche.length > 0 && form.campaignGoal.length > 0;
     if (step === 1) return form.deliverables.length > 0 && form.platforms.length > 0;
     if (step === 2) {
-      if (!form.deadline) return false;
+      if (!form.deadline || form.deadline < minDate) return false;
       const slots = +form.totalSlots || 0;
       if (slots <= 0) return false;
       if (form.dealType === 'barter') return Boolean(form.barterProduct && form.barterProduct.trim());
@@ -52,6 +53,11 @@ export default function CreateCampaign() {
   };
 
   const handleSubmit = async () => {
+    if (!form.deadline || form.deadline < minDate) {
+      toast.error('Campaign deadline must be today or a future date.');
+      setStep(2);
+      return;
+    }
     const slots = +form.totalSlots || 1;
     const cashBudget = +form.budget || (+form.payoutPerCreator * slots) || 0;
 
@@ -64,11 +70,19 @@ export default function CreateCampaign() {
     setSaving(true);
     try {
       await campaignsAPI.create({
-        ...form, budget: cashBudget, totalSlots: slots,
-        minFollowers: +form.minFollowers, minEngagement: +form.minEngagement,
+        ...form,
+        niche: Array.isArray(form.niche) ? form.niche.join(', ') : (form.niche || ''),
+        campaignGoal: Array.isArray(form.campaignGoal) ? form.campaignGoal.join(', ') : (form.campaignGoal || ''),
+        targetAudience: Array.isArray(form.targetAudience) ? form.targetAudience.join(', ') : (form.targetAudience || ''),
+        budget: cashBudget,
+        totalSlots: slots,
+        minFollowers: +form.minFollowers,
+        minEngagement: +form.minEngagement,
         kpiTargets: {
-          reach: +form.kpiTargets.reach || 0, impressions: +form.kpiTargets.impressions || 0,
-          engagement: +form.kpiTargets.engagement || 0, conversions: +form.kpiTargets.conversions || 0
+          reach: +form.kpiTargets.reach || 0,
+          impressions: +form.kpiTargets.impressions || 0,
+          engagement: +form.kpiTargets.engagement || 0,
+          conversions: +form.kpiTargets.conversions || 0
         },
         workflowStatus: 'brand_submitted',
       });
@@ -149,33 +163,27 @@ export default function CreateCampaign() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: i < step
-                  ? 'linear-gradient(135deg, var(--acc2, #7C8B5A), #5a6640)'
-                  : i === step
-                    ? 'linear-gradient(135deg, var(--acc, #E65F2B), #d44e1c)'
-                    : 'var(--s2, rgba(255,255,255,0.06))',
+                background: i <= step
+                  ? 'var(--acc, #E65F2B)'
+                  : 'var(--s2, rgba(255,255,255,0.06))',
                 border: i === step
-                  ? '2px solid rgba(255, 255, 255, 0.4)'
+                  ? '2px solid rgba(255, 255, 255, 0.5)'
                   : i < step
-                    ? '1px solid rgba(124, 139, 90, 0.4)'
+                    ? '1px solid var(--acc, #E65F2B)'
                     : '1px solid var(--border)',
                 color: i <= step ? '#ffffff' : 'var(--t3)',
                 boxShadow: i === step
-                  ? '0 0 16px rgba(230, 95, 43, 0.4)'
-                  : i < step
-                    ? '0 0 10px rgba(124, 139, 90, 0.2)'
-                    : 'none',
+                  ? '0 2px 10px rgba(230, 95, 43, 0.35)'
+                  : 'none',
                 transition: 'all .3s ease'
               }}>
                 {i < step ? '✓' : i + 1}
               </div>
               <span className="stepper-label" style={{
                 fontSize: 11,
-                color: i === step
+                color: i <= step
                   ? 'var(--acc, #E65F2B)'
-                  : i < step
-                    ? 'var(--acc2, #7C8B5A)'
-                    : 'var(--t3)',
+                  : 'var(--t3)',
                 fontWeight: i <= step ? 700 : 500,
                 textAlign: 'center',
                 lineHeight: 1.3,
@@ -188,7 +196,7 @@ export default function CreateCampaign() {
                 flex: 1,
                 height: 3,
                 background: i < step
-                  ? 'linear-gradient(90deg, var(--acc2, #7C8B5A), var(--acc, #E65F2B))'
+                  ? 'var(--acc, #E65F2B)'
                   : 'var(--border)',
                 borderRadius: 99,
                 margin: '0 8px',
@@ -480,7 +488,14 @@ export default function CreateCampaign() {
               <Input label="Total Creator Slots *" type="number" value={form.totalSlots} onChange={upd('totalSlots')} placeholder="5" min="1" />
             )}
 
-            <Input label="Campaign Deadline *" type="date" value={form.deadline} onChange={upd('deadline')} min={minDate} />
+            <Input
+              label="Campaign Deadline *"
+              type="date"
+              value={form.deadline}
+              onChange={upd('deadline')}
+              min={minDate}
+              error={form.deadline && form.deadline < minDate ? 'Please choose today or a future date' : ''}
+            />
 
             {/* Campaign Deal Summary Badge */}
             {form.totalSlots && (
@@ -559,7 +574,7 @@ export default function CreateCampaign() {
             </div>
             <div style={{ padding: '16px 18px', background: 'rgba(124,139,90,0.08)', border: '1px solid rgba(124,139,90,0.2)', borderRadius: 12 }}>
               <div style={{ fontSize: 13, color: 'var(--acc2)', fontWeight: 700, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}><Zap size={14} style={{ color: 'var(--acc2)' }} /> What happens next?</div>
-              {['Admin team reviews your brief (4-6 hours)', 'AI analyzes 12,000+ creators for best match', 'Top creators are bulk-assigned to your campaign', 'Creators notified and begin creating content', 'Real-time progress tracked in your dashboard'].map((s, i) => (
+              {['Admin team reviews your brief (4-6 hours)', 'AI analyzes all creators for best match', 'Top creators are bulk-assigned to your campaign', 'Creators notified and begin creating content', 'Real-time progress tracked in your dashboard'].map((s, i) => (
                 <div key={i} style={{ fontSize: 12, color: 'var(--t2)', marginBottom: 5, display: 'flex', gap: 8 }}><span style={{ color: 'var(--acc2)', flexShrink: 0 }}>{i + 1}.</span>{s}</div>
               ))}
             </div>

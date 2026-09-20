@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { campaignsAPI, reelsAPI } from '../../api';
 import { PageLoader, StatusBadge, WorkflowPipeline, Avatar, Btn } from '../../components/ui';
-import { ArrowLeft, ExternalLink, Play, Eye, Heart, MessageCircle, TrendingUp, Star, Bot } from 'lucide-react';
+import EditCampaignModal from '../../components/brand/EditCampaignModal';
+import toast from 'react-hot-toast';
+import { ArrowLeft, ExternalLink, Play, Eye, Heart, MessageCircle, TrendingUp, Star, Bot, Pencil, Trash2 } from 'lucide-react';
 
 const fmt = n => {
   if (!n) return '0';
@@ -18,6 +20,7 @@ export default function CampaignDetail() {
   const [loading, setLoading]   = useState(true);
   const [reels,   setReels]     = useState([]);
   const [reelSummary, setReelSummary] = useState(null);
+  const [editing, setEditing]   = useState(false);
 
   useEffect(() => {
     campaignsAPI.brandCampaigns()
@@ -30,6 +33,18 @@ export default function CampaignDetail() {
       .catch(() => {});
   }, [id]);
 
+  const handleDelete = async () => {
+    if (!campaign) return;
+    if (!window.confirm(`Are you sure you want to delete campaign "${campaign.title}"? This cannot be undone.`)) return;
+    try {
+      await campaignsAPI.delete(campaign._id);
+      toast.success('Campaign deleted successfully');
+      nav('/brand/campaigns');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete campaign');
+    }
+  };
+
   if (loading)  return <PageLoader />;
   if (!campaign) return <div style={{padding:40,textAlign:'center',color:'var(--t2)'}}>Campaign not found. <button onClick={()=>nav(-1)} className="btn btn-ghost btn-sm">Go back</button></div>;
 
@@ -37,7 +52,33 @@ export default function CampaignDetail() {
 
   return (
     <div className="page-enter" style={{ maxWidth:900, margin:'0 auto', display:'flex', flexDirection:'column', gap:18 }}>
-      <button className="btn btn-ghost btn-sm" onClick={()=>nav(-1)} style={{ alignSelf:'flex-start' }}><ArrowLeft size={13}/> Back</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <button className="btn btn-ghost btn-sm" onClick={()=>nav(-1)} style={{ alignSelf:'flex-start' }}><ArrowLeft size={13}/> Back</button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={() => setEditing(true)}
+            className="btn btn-secondary btn-sm"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12 }}
+          >
+            <Pencil size={13} style={{ color: 'var(--acc)' }} /> Edit Campaign
+          </button>
+          <button
+            onClick={handleDelete}
+            className="btn btn-sm"
+            style={{
+              background: 'rgba(239, 68, 68, 0.08)',
+              border: '1px solid rgba(239, 68, 68, 0.25)',
+              color: '#f87171',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              fontSize: 12
+            }}
+          >
+            <Trash2 size={13} /> Delete
+          </button>
+        </div>
+      </div>
 
       {/* Header */}
       <div className="card">
@@ -197,6 +238,13 @@ export default function CampaignDetail() {
           ))}
         </div>
       </div>
+
+      <EditCampaignModal
+        campaign={campaign}
+        isOpen={editing}
+        onClose={() => setEditing(false)}
+        onUpdated={(updated) => setCampaign(prev => ({ ...prev, ...updated }))}
+      />
     </div>
   );
 }

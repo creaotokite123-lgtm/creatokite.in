@@ -22,13 +22,15 @@ const CustomStatCard = ({ label, value, icon: Icon, color, sub }) => (
     WebkitBackdropFilter: 'var(--glass-blur)',
     border: '1px solid var(--glass-border)',
     borderRadius: 16,
-    padding: '20px 20px 18px',
+    padding: '14px 16px',
     boxShadow: 'var(--glass-shadow)',
     display: 'flex',
     flexDirection: 'column',
-    gap: 10,
+    gap: 8,
     position: 'relative',
     overflow: 'hidden',
+    minWidth: 0,
+    width: '100%',
     transition: 'transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.24s ease, box-shadow 0.24s ease',
   }}
   onMouseEnter={e => {
@@ -82,7 +84,7 @@ export default function Earnings() {
         <p style={{ color:'var(--t2)', fontSize:13, fontWeight: 500 }}>Track your campaign income. Payments are released after admin approves your content.</p>
       </div>
 
-      <div className="grid-4">
+      <div className="grid-2-mobile dashboard-stats grid-2-2x2" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12, width: '100%' }}>
         <CustomStatCard label="Total Earned"   value={formatStatCurrency(s.earned)}  icon={Wallet}       color="var(--gold)"  />
         <CustomStatCard label="Campaigns Done" value={s.completed||0}                            icon={CheckCircle}  color="var(--acc2)"  />
         <CustomStatCard label="Pending"        value={formatStatCurrency(s.pending)}   icon={Clock}        color="var(--gold)"  sub="Awaiting approval" />

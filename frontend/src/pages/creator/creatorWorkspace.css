@@ -495,13 +495,26 @@
     justify-content: center !important;
   }
 
-  /* Grid columns stack to 1fr on mobile */
+  /* Grid columns stack to 1fr on mobile, EXCEPT 2x2 grids */
   .creator-workspace .grid-4,
   .creator-workspace .grid-3,
-  .creator-workspace .grid-2,
   .creator-workspace .grid-5 {
     grid-template-columns: 1fr !important;
     gap: 12px !important;
+  }
+
+  .creator-workspace .grid-2:not(.grid-2-mobile):not(.dashboard-stats):not(.grid-2-2x2) {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .creator-workspace .grid-2-mobile,
+  .creator-workspace .dashboard-stats,
+  .creator-workspace .grid-2-2x2 {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
   }
 
   /* Stat cards */

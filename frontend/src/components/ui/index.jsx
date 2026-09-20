@@ -637,35 +637,140 @@ export function InstagramIcon({ size = 14, style = {} }) {
   );
 }
 
+export function getFriendlyLinkInfo(rawUrl) {
+  if (!rawUrl) return { label: '🔗 Link', url: '' };
+  let url = String(rawUrl).trim();
+  url = url.replace(/[.,;!?)]+$/, '');
+  const lower = url.toLowerCase();
+
+  // Instagram
+  if (lower.includes('instagram.com') || lower.includes('instagr.am')) {
+    if (lower.includes('/reel/') || lower.includes('/reels/')) return { label: '🔗 Instagram Reel', url };
+    if (lower.includes('/p/')) return { label: '🔗 Instagram Post', url };
+    if (lower.includes('/stories/')) return { label: '🔗 Instagram Story', url };
+    return { label: '🔗 Instagram', url };
+  }
+
+  // WhatsApp
+  if (lower.includes('wa.me') || lower.includes('whatsapp.com') || lower.includes('api.whatsapp.com')) {
+    return { label: '🔗 WhatsApp', url };
+  }
+
+  // Mail / Email
+  if (lower.startsWith('mailto:') || lower.includes('mail.google.com') || lower.includes('outlook.live.com/mail') || lower.includes('mail.yahoo.com')) {
+    return { label: '🔗 Email / Mail', url };
+  }
+
+  // Google Forms, Docs, Drive, Sheets
+  if (lower.includes('forms.gle') || lower.includes('docs.google.com/forms')) {
+    return { label: '🔗 Google Form', url };
+  }
+  if (lower.includes('drive.google.com')) {
+    return { label: '🔗 Google Drive', url };
+  }
+  if (lower.includes('docs.google.com/spreadsheets') || lower.includes('sheets.google.com')) {
+    return { label: '🔗 Google Sheet', url };
+  }
+  if (lower.includes('docs.google.com')) {
+    return { label: '🔗 Google Doc', url };
+  }
+
+  // Typeform
+  if (lower.includes('typeform.com')) {
+    return { label: '🔗 Typeform', url };
+  }
+
+  // YouTube
+  if (lower.includes('youtube.com') || lower.includes('youtu.be')) {
+    if (lower.includes('/shorts/')) return { label: '🔗 YouTube Shorts', url };
+    return { label: '🔗 YouTube', url };
+  }
+
+  // Twitter / X
+  if (lower.includes('twitter.com') || lower.includes('x.com')) {
+    return { label: '🔗 X (Twitter)', url };
+  }
+
+  // LinkedIn
+  if (lower.includes('linkedin.com')) {
+    return { label: '🔗 LinkedIn', url };
+  }
+
+  // Facebook
+  if (lower.includes('facebook.com') || lower.includes('fb.watch') || lower.includes('fb.com')) {
+    return { label: '🔗 Facebook', url };
+  }
+
+  // Telegram
+  if (lower.includes('t.me') || lower.includes('telegram.me')) {
+    return { label: '🔗 Telegram', url };
+  }
+
+  // TikTok
+  if (lower.includes('tiktok.com')) {
+    return { label: '🔗 TikTok', url };
+  }
+
+  // Discord
+  if (lower.includes('discord.gg') || lower.includes('discord.com')) {
+    return { label: '🔗 Discord', url };
+  }
+
+  // Spotify
+  if (lower.includes('spotify.com')) {
+    return { label: '🔗 Spotify', url };
+  }
+
+  // Pinterest
+  if (lower.includes('pinterest.com') || lower.includes('pin.it')) {
+    return { label: '🔗 Pinterest', url };
+  }
+
+  // GitHub
+  if (lower.includes('github.com')) {
+    return { label: '🔗 GitHub', url };
+  }
+
+  // Notion
+  if (lower.includes('notion.site') || lower.includes('notion.so')) {
+    return { label: '🔗 Notion', url };
+  }
+
+  // Fallback for any other custom link
+  return { label: '🔗 Link', url };
+}
+
 export function renderTextWithLinks(text, options = {}) {
   if (!text) return null;
   const str = String(text);
-  const urlRegex = /(https?:\/\/[^\s<]+)/g;
+  const urlRegex = /(https?:\/\/[^\s<]+|mailto:[^\s<]+)/g;
   const parts = str.split(urlRegex);
 
   return parts.map((part, idx) => {
-    if (part.match(/^https?:\/\//i)) {
+    if (part.match(/^(https?:\/\/|mailto:)/i)) {
+      const { label, url } = getFriendlyLinkInfo(part);
       return (
         <a
           key={idx}
-          href={part}
+          href={url || part}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
           style={{
             color: options.color || 'var(--acc, #E65F2B)',
             textDecoration: 'underline',
-            wordBreak: 'break-all',
-            overflowWrap: 'anywhere',
             fontWeight: 700,
             cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 3,
             transition: 'opacity 0.2s',
             ...options.style
           }}
           onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.8'; }}
           onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
         >
-          {part}
+          {label} ↗
         </a>
       );
     }

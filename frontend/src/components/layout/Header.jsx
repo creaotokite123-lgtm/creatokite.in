@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Bell, Sun, Moon, Menu, Search, X, Eye, LogOut,
-  CheckCheck, Brain, Trophy, Home,
+  CheckCheck, Brain, Trophy,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -297,24 +297,6 @@ export default function Header({ onMenuToggle }) {
             </span>
           </div>
         )}
-
-        {/* ── Home (landing page) ─────────────────── */}
-        <button
-          onClick={() => navigate('/')}
-          style={{
-            width: 38, height: 38, borderRadius: 12, background: 'var(--s1)',
-            border: '1px solid var(--border)', color: 'var(--t1)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', flexShrink: 0, transition: 'all 0.2s',
-            boxShadow: 'var(--glass-shadow)'
-          }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'var(--s2)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.borderColor = 'var(--acc)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'var(--s1)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
-          title="Home"
-          aria-label="Go to home page"
-        >
-          <Home size={17} />
-        </button>
 
         {/* ── Admin quick links (desktop) ──────────── */}
         {(activeRole === 'admin' || activeRole === 'superadmin') && (

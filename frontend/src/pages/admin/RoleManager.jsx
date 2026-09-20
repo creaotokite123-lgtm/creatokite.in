@@ -270,6 +270,35 @@ export default function RoleManager() {
               </div>
               {!isSuperAdmin && <p style={{fontSize:10,color:'var(--t3)',marginTop:6}}>* Admin promotion requires SuperAdmin access</p>}
             </div>
+
+            {/* Danger Zone: Delete User */}
+            {selected._id !== me?._id && (
+              <div style={{borderTop:'1px solid var(--border)',paddingTop:14,marginTop:4,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <div>
+                  <div style={{fontSize:12,fontWeight:700,color:'var(--rose)'}}>Delete User Account</div>
+                  <div style={{fontSize:11,color:'var(--t3)'}}>Permanently or soft-delete user account</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (!window.confirm(`Are you sure you want to delete user "${selected.displayName}" (${selected.email})?`)) return;
+                    try {
+                      await adminAPI.deleteUser(selected._id);
+                      setUsers(prev => prev.filter(x => x._id !== selected._id));
+                      setTotal(prev => Math.max(0, prev - 1));
+                      setShowDetail(false);
+                      toast.success(`User "${selected.displayName}" deleted successfully`);
+                    } catch(e) {
+                      toast.error(e.response?.data?.message || 'Failed to delete user');
+                    }
+                  }}
+                  className="btn btn-danger btn-sm"
+                  style={{fontSize:11,gap:4}}
+                >
+                  <X size={12}/> Delete User
+                </button>
+              </div>
+            )}
           </div>
         )}
       </Modal>

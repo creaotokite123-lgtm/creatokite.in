@@ -236,6 +236,26 @@ section {
   pointer-events: auto;
 }
 
+.sidebar-user-card {
+  margin-bottom: 8px;
+}
+
+.sidebar-card-logout {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar-user-card {
+    margin-bottom: 0 !important;
+  }
+  .sidebar-card-logout {
+    display: inline-flex !important;
+  }
+  .sidebar-bottom-logout {
+    display: none !important;
+  }
+}
+
 /* ── Sidebar nav group ───────────────────────────────────── */
 .nav-group {
   margin-bottom: 4px;
@@ -2503,17 +2523,21 @@ tr:hover td {
   .rs-sidebar-content,
   .rs-split,
   .responsive-grid,
-  .grid-2-mobile,
   .grid-3-mobile,
-  .rs-cols-2,
   .rs-cols-3,
   .rs-cols-4,
   .rs-cols-auto {
     grid-template-columns: 1fr !important;
   }
 
-  .rs-cols-2-sm {
-    grid-template-columns: repeat(2, 1fr) !important;
+  .rs-cols-2-sm,
+  .grid-2-mobile,
+  .grid-2-2x2,
+  .dashboard-stats,
+  .analytics-stats {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
   }
 
   .rs-hide-sm {

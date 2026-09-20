@@ -332,12 +332,17 @@ const notificationSchema = new mongoose.Schema({
   title: { type: String, required: true },
   body: { type: String, required: true },
   read: { type: Boolean, default: false },
+  priority: { type: String, enum: ['Low', 'Medium', 'High', 'Critical'], default: 'Medium' },
+  channels: [{ type: String }],
+  status: { type: String, enum: ['sent', 'delivered', 'scheduled', 'failed'], default: 'delivered' },
+  scheduledFor: { type: Date },
   data: { type: mongoose.Schema.Types.Mixed, default: {} },
   link: { type: String, default: '' },
   isDeleted: { type: Boolean, default: false },
 }, { timestamps: true });
 notificationSchema.index({ user: 1, read: 1, createdAt: -1 });
 notificationSchema.index({ user: 1, isDeleted: 1 });
+notificationSchema.index({ status: 1, scheduledFor: 1 });
 
 notificationSchema.post('save', async function (doc) {
   try {
@@ -367,7 +372,7 @@ notificationSchema.post('save', async function (doc) {
 
 /* ════ TRANSACTION ════ */
 const transactionSchema = new mongoose.Schema({
-  type: { type: String, enum: ['payment', 'refund', 'payout', 'escrow_fund', 'escrow_release'], required: true },
+  type: { type: String, enum: ['payment', 'refund', 'payout', 'budget_allocation', 'milestone_release'], required: true },
   campaign: { type: mongoose.Schema.Types.ObjectId, ref: 'Campaign' },
   creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   brand: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

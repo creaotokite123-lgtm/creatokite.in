@@ -13,6 +13,8 @@ const Login        = lazy(() => import('./pages/auth/Login'));
 const Register     = lazy(() => import('./pages/auth/Register'));
 const LoginSuccess = lazy(() => import('./pages/LoginSuccess'));
 const NotFound     = lazy(() => import('./pages/NotFound'));
+const LegalPortal  = lazy(() => import('./pages/legal/LegalPortal'));
+const Blog         = lazy(() => import('./pages/Blog'));
 
 /* ── Creator ── */
 const CreatorDashboard  = lazy(() => import('./pages/creator/Dashboard'));
@@ -142,6 +144,10 @@ export default function App() {
       <Route path="/login"         element={<GuestRoute><Login /></GuestRoute>} />
       <Route path="/register"      element={<GuestRoute><Register /></GuestRoute>} />
       <Route path="/login-success" element={<LoginSuccess />} />
+      <Route path="/privacy"       element={<LegalPortal defaultTab="privacy" />} />
+      <Route path="/security"      element={<LegalPortal defaultTab="security" />} />
+      <Route path="/terms"         element={<LegalPortal defaultTab="terms" />} />
+      <Route path="/blog"          element={<Blog />} />
 
       {/* ── Shared: All Authenticated Roles ─────────── */}
       <Route element={<ProtectedRoute roles={['admin', 'team_member', 'superadmin', 'creator', 'brand']}><AppLayout /></ProtectedRoute>}>

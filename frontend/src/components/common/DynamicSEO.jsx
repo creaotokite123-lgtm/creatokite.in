@@ -37,6 +37,38 @@ const PUBLIC_ROUTE_SEO = {
     noindex: false,
     breadcrumb: 'Opportunities',
   },
+  '/privacy': {
+    title: 'Privacy Policy | CreatoKite - Creator & Brand Data Protection',
+    description: 'Learn how CreatoKite protects creator analytics, brand campaign briefs, payment transactions, and user privacy in compliance with the DPDP Act 2023 & GDPR.',
+    keywords: 'CreatoKite Privacy Policy, CreatoKite Data Protection, Creator Privacy India, UGC Platform Security, Brand Data Safety CreatoKite',
+    canonical: `${SITE_URL}/privacy`,
+    noindex: false,
+    breadcrumb: 'Privacy Policy',
+  },
+  '/security': {
+    title: 'Security Architecture & Trust Information | CreatoKite',
+    description: 'Explore CreatoKite enterprise security safeguards: TLS 1.3 encryption, AES-256 database protection, verified payout safety, and OAuth social sandboxing.',
+    keywords: 'CreatoKite Security, CreatoKite Verified Payouts, Creator Platform Encryption, Safe UGC Platform India, Brand Campaign Security',
+    canonical: `${SITE_URL}/security`,
+    noindex: false,
+    breadcrumb: 'Security',
+  },
+  '/terms': {
+    title: 'Terms of Service & Creator-Brand Agreement | CreatoKite',
+    description: 'Review CreatoKite official terms of service governing UGC video campaigns, creator authenticity, milestone payments, and advertising usage rights.',
+    keywords: 'CreatoKite Terms of Service, Creator Brand Agreement, UGC Content Usage Rights, CreatoKite Collaboration Guidelines',
+    canonical: `${SITE_URL}/terms`,
+    noindex: false,
+    breadcrumb: 'Terms of Service',
+  },
+  '/blog': {
+    title: 'CreatoKite Blog | UGC Marketing, Creator Growth & Platform Insights',
+    description: 'Discover how CreatoKite empowers brands with authentic UGC creator matching, AI performance analytics, and creator economy insights in India.',
+    keywords: 'CreatoKite Blog, UGC Marketing India, Creator Economy CreatoKite, Influencer Marketing Guides, Brand Creator Collabs',
+    canonical: `${SITE_URL}/blog`,
+    noindex: false,
+    breadcrumb: 'Blog',
+  },
 };
 
 export default function DynamicSEO() {

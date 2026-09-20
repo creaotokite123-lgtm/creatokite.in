@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Search, Eye, UserCog, Ban, RefreshCw } from 'lucide-react';
+import { Users, Search, Eye, UserCog, Ban, RefreshCw, Trash2, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { adminAPI } from '../../api';
-import { Avatar, StatusBadge, EmptyState, PageLoader, Modal } from '../../components/ui';
+import { Avatar, StatusBadge, EmptyState, PageLoader, Modal, Btn } from '../../components/ui';
 import toast from 'react-hot-toast';
 
 const ROLES = ['', 'creator', 'brand', 'team_member', 'admin', 'superadmin'];
@@ -21,6 +21,9 @@ export default function AdminUsers() {
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState(null);
   const [banning, setBanning] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [permanentDelete, setPermanentDelete] = useState(false);
 
   const load = useCallback(async (pg = 1) => {
     setLoading(true);
@@ -51,6 +54,24 @@ export default function AdminUsers() {
       toast.success(u.isBanned ? 'User unbanned' : 'User banned');
     } catch (e) { toast.error('Failed'); }
     finally { setBanning(null); }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      const res = await adminAPI.deleteUser(deleteTarget._id, { permanent: permanentDelete });
+      setUsers(prev => prev.filter(x => x._id !== deleteTarget._id));
+      setTotal(prev => Math.max(0, prev - 1));
+      if (selected?._id === deleteTarget._id) setSelected(null);
+      toast.success(res.message || `User "${deleteTarget.displayName}" deleted successfully`);
+      setDeleteTarget(null);
+      setPermanentDelete(false);
+    } catch (e) {
+      toast.error(e.response?.data?.message || 'Failed to delete user');
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const recalc = async (id) => {
@@ -153,6 +174,9 @@ export default function AdminUsers() {
                           {(u.role === 'creator' || u.roles?.includes('creator')) && (
                             <button onClick={() => recalc(u._id)} className="btn btn-ghost btn-sm" style={{ fontSize: 10, padding: '3px 6px', color: 'var(--gold)' }} title="Recalculate score"><RefreshCw size={11} /></button>
                           )}
+                          <button onClick={() => setDeleteTarget(u)} className="btn btn-ghost btn-sm" style={{ fontSize: 10, padding: '3px 6px', color: '#ef4444' }} title="Delete User">
+                            <Trash2 size={11} />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -171,6 +195,7 @@ export default function AdminUsers() {
             )}
           </div>}
 
+      {/* User Details Modal */}
       <Modal open={!!selected} onClose={() => setSelected(null)} title={selected?.displayName || 'User Details'} maxWidth={460} fullscreenMobile={false}>
         {selected && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -239,26 +264,104 @@ export default function AdminUsers() {
             </div>
 
             {/* Action Buttons */}
-            <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+            <div style={{ display: 'flex', gap: 8, marginTop: 4, flexWrap: 'wrap' }}>
               <button
                 onClick={() => { setSelected(null); navigate('/admin/roles'); }}
                 className="tactile-btn-new-campaign"
-                style={{ flex: 1, justifyContent: 'center', fontSize: 12.5 }}
+                style={{ flex: '1 1 120px', justifyContent: 'center', fontSize: 12 }}
               >
-                <UserCog size={14} /> Manage Roles
+                <UserCog size={14} /> Roles
               </button>
               <button
                 onClick={() => toggleBan(selected)}
                 style={{
-                  flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                  padding: '10px 16px', borderRadius: 14,
-                  background: selected.isBanned ? 'rgba(34, 197, 94, 0.14)' : 'rgba(239, 68, 68, 0.12)',
-                  color: selected.isBanned ? '#16a34a' : '#dc2626',
-                  border: `1.5px solid ${selected.isBanned ? 'rgba(34, 197, 94, 0.4)' : 'rgba(239, 68, 68, 0.4)'}`,
-                  fontWeight: 800, fontSize: 12.5, cursor: 'pointer', transition: 'all 0.18s'
+                  flex: '1 1 120px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  padding: '9px 14px', borderRadius: 14,
+                  background: selected.isBanned ? 'rgba(34, 197, 94, 0.14)' : 'rgba(245, 158, 11, 0.12)',
+                  color: selected.isBanned ? '#16a34a' : '#d97706',
+                  border: `1.5px solid ${selected.isBanned ? 'rgba(34, 197, 94, 0.4)' : 'rgba(245, 158, 11, 0.4)'}`,
+                  fontWeight: 800, fontSize: 12, cursor: 'pointer', transition: 'all 0.18s'
                 }}
               >
-                <Ban size={14} /> {selected.isBanned ? 'Unban User' : 'Ban User'}
+                <Ban size={14} /> {selected.isBanned ? 'Unban' : 'Ban User'}
+              </button>
+              <button
+                onClick={() => setDeleteTarget(selected)}
+                style={{
+                  flex: '1 1 120px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  padding: '9px 14px', borderRadius: 14,
+                  background: 'rgba(239, 68, 68, 0.12)',
+                  color: '#dc2626',
+                  border: '1.5px solid rgba(239, 68, 68, 0.4)',
+                  fontWeight: 800, fontSize: 12, cursor: 'pointer', transition: 'all 0.18s'
+                }}
+              >
+                <Trash2 size={14} /> Delete User
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Delete User Confirmation Modal */}
+      <Modal open={!!deleteTarget} onClose={() => { if (!deleting) setDeleteTarget(null); }} title="" maxWidth={420}>
+        {deleteTarget && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, textAlign: 'center', padding: '10px 4px' }}>
+            <div style={{
+              width: 52, height: 52, borderRadius: '50%', background: 'rgba(239, 68, 68, 0.12)',
+              border: '1.5px solid rgba(239, 68, 68, 0.3)', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', margin: '0 auto', color: '#ef4444'
+            }}>
+              <AlertTriangle size={26} />
+            </div>
+
+            <div>
+              <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--t1)', margin: '0 0 6px 0' }}>
+                Delete User Account?
+              </h3>
+              <p style={{ fontSize: 13, color: 'var(--t2)', margin: 0, lineHeight: 1.5 }}>
+                Are you sure you want to delete <strong style={{ color: 'var(--t1)' }}>{deleteTarget.displayName}</strong> ({deleteTarget.email})?
+              </p>
+            </div>
+
+            <div style={{
+              background: 'var(--s2)', border: '1px solid var(--border)', borderRadius: 12,
+              padding: '12px 14px', textAlign: 'left', fontSize: 12, color: 'var(--t3)', display: 'flex', flexDirection: 'column', gap: 8
+            }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: 'var(--t1)', fontWeight: 600 }}>
+                <input
+                  type="checkbox"
+                  checked={permanentDelete}
+                  onChange={e => setPermanentDelete(e.target.checked)}
+                  style={{ width: 16, height: 16, accentColor: '#ef4444', cursor: 'pointer' }}
+                />
+                <span>Permanently wipe from database (Hard Delete)</span>
+              </label>
+              <span style={{ fontSize: 11, color: 'var(--t3)' }}>
+                {permanentDelete
+                  ? '⚠️ All profile data and notifications for this user will be permanently erased.'
+                  : 'ℹ️ Default: Soft-deletes user, revokes active sessions and hides them from all app listings.'}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => setDeleteTarget(null)}
+                className="btn btn-secondary"
+                style={{ flex: 1, justifyContent: 'center' }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={handleDeleteUser}
+                className="btn btn-danger"
+                style={{ flex: 1, justifyContent: 'center', gap: 6, fontWeight: 700 }}
+              >
+                {deleting ? 'Deleting…' : <><Trash2 size={14} /> Confirm Delete</>}
               </button>
             </div>
           </div>

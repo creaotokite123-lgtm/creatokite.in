@@ -1178,15 +1178,15 @@ export default function Landing() {
             </div>
             <div>
               <h4>Resources</h4>
-              <a href="#how-it-works" onClick={(e) => { e.preventDefault(); scrollToSection('how-it-works'); }}>Creator Academy</a>
+              <a href="/blog" onClick={(e) => { e.preventDefault(); nav('/blog'); }}>Blog</a>
               <a href="mailto:creaotokite123@gmail.com">Help Desk</a>
               <a href="mailto:creaotokite123@gmail.com">Contact Support</a>
             </div>
             <div>
-              <h4>Legal</h4>
-              <a href="#" onClick={(e) => e.preventDefault()}>Privacy Policy</a>
-              <a href="#" onClick={(e) => e.preventDefault()}>Terms of Service</a>
-              <a href="#" onClick={(e) => e.preventDefault()}>Security Info</a>
+              <h4>Legal &amp; Trust</h4>
+              <a href="/privacy" onClick={(e) => { e.preventDefault(); nav('/privacy'); }}>Privacy Policy</a>
+              <a href="/security" onClick={(e) => { e.preventDefault(); nav('/security'); }}>Security Info</a>
+              <a href="/terms" onClick={(e) => { e.preventDefault(); nav('/terms'); }}>Terms of Service</a>
             </div>
           </div>
           <div className="bottom">

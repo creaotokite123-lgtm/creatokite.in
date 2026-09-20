@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { PageLoader, EmptyState, Spinner, renderTextWithLinks } from '../../components/ui';
-import { Search, ExternalLink, Calendar, Award, Briefcase, Sparkles } from 'lucide-react';
+import { Search, ExternalLink, Calendar, Award, Briefcase, Sparkles, Zap, ChevronDown, Check } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import api from '../../api';
 
@@ -27,8 +27,19 @@ const CATEGORY_COLORS = {
 export default function Opportunities() {
   const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     fetchOpportunities();
@@ -38,7 +49,7 @@ export default function Opportunities() {
     setLoading(true);
     try {
       const res = await api.get('/opportunities', {
-        params: { category: categoryFilter, search }
+        params: { category: categoryFilter || undefined }
       });
       if (res.data?.success) {
         setOpportunities(res.data.opportunities || []);
@@ -50,15 +61,10 @@ export default function Opportunities() {
     }
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    fetchOpportunities();
-  };
-
   return (
     <div className="page-enter" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <SEO
-        title="Creator Opportunities &amp; UGC Brand Gigs | CreatoKite"
+        title="Creator Opportunities & UGC Brand Gigs | CreatoKite"
         description="Browse active UGC creator opportunities, brand deals, sponsored challenges, and high-payout video campaigns on CreatoKite."
         keywords="UGC Deals, Creator Opportunities, Sponsored Video Gigs, Brand Collaborations, CreatoKite Jobs"
         canonical="/opportunities"
@@ -80,50 +86,141 @@ export default function Opportunities() {
         </div>
       </div>
 
-      {/* Filters & Search */}
-      <div className="card" style={{ padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <form onSubmit={handleSearchSubmit} style={{ width: '100%', position: 'relative' }}>
-          <Search style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--t3)' }} size={16} />
-          <input
-            type="text"
-            placeholder="Search opportunities, brands, rewards..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="form-input"
-            style={{ width: '100%', paddingLeft: 40, fontSize: 13.5, height: 42, borderRadius: 10, border: '1px solid var(--border)', background: 'var(--s1)', color: 'var(--t1)' }}
-          />
-        </form>
+      {/* Filter Bar */}
+      <div className="card" style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--t1)', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Sparkles size={16} color="var(--acc)" />
+          <span>Active Opportunities</span>
+          <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 99, background: 'rgba(230,95,43,0.15)', color: 'var(--acc)', fontWeight: 800 }}>
+            {opportunities.length}
+          </span>
+        </div>
 
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, width: '100%', scrollbarWidth: 'none' }}>
-          <button
-            onClick={() => setCategoryFilter('')}
-            style={{
-              fontSize: 12, padding: '7px 16px', borderRadius: 10, whiteSpace: 'nowrap', fontWeight: 700, cursor: 'pointer', flexShrink: 0,
-              background: categoryFilter === '' ? 'var(--acc)' : 'var(--s1)',
-              color: categoryFilter === '' ? '#FFFFFF' : 'var(--t2)',
-              border: categoryFilter === '' ? '1px solid var(--acc)' : '1px solid var(--border)',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            All Types
-          </button>
-          {Object.entries(CATEGORY_LABELS).map(([catKey, catLabel]) => (
+        {/* Category Dropdown */}
+        <div ref={dropdownRef} style={{ position: 'relative', width: '100%', maxWidth: 260 }}>
             <button
-              key={catKey}
-              onClick={() => setCategoryFilter(catKey)}
+              type="button"
+              onClick={() => setDropdownOpen(o => !o)}
               style={{
-                fontSize: 12, padding: '7px 16px', borderRadius: 10, whiteSpace: 'nowrap', fontWeight: 600, cursor: 'pointer', flexShrink: 0,
-                background: categoryFilter === catKey ? 'var(--acc)' : 'var(--s1)',
-                color: categoryFilter === catKey ? '#FFFFFF' : 'var(--t2)',
-                border: categoryFilter === catKey ? '1px solid var(--acc)' : '1px solid var(--border)',
-                transition: 'all 0.15s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 12,
+                width: '100%',
+                height: 42,
+                padding: '0 14px',
+                borderRadius: 10,
+                background: 'var(--s1, #161822)',
+                border: dropdownOpen ? '1.5px solid var(--acc, #E65F2B)' : '1px solid var(--border)',
+                color: 'var(--t1)',
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: 'pointer',
+                boxShadow: dropdownOpen ? '0 0 0 3px rgba(230,95,43,0.15)' : 'none',
+                transition: 'all 0.15s ease'
               }}
             >
-              {catLabel}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflow: 'hidden' }}>
+                <span style={{ fontSize: 12, color: 'var(--t3)', fontWeight: 600 }}>Type:</span>
+                <span style={{ fontSize: 13, fontWeight: 750, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {categoryFilter ? (CATEGORY_LABELS[categoryFilter] || categoryFilter) : 'All Types'}
+                </span>
+              </div>
+              <ChevronDown size={14} style={{ transform: dropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', color: 'var(--t3)', flexShrink: 0 }} />
             </button>
-          ))}
+
+            {/* Dropdown Menu */}
+            {dropdownOpen && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 6px)',
+                  right: 0,
+                  zIndex: 100,
+                  width: '100%',
+                  minWidth: 260,
+                  maxHeight: 360,
+                  overflowY: 'auto',
+                  background: 'var(--s1, #161822)',
+                  border: '1px solid var(--border, rgba(255,255,255,0.12))',
+                  borderRadius: 12,
+                  boxShadow: '0 16px 36px rgba(0,0,0,0.45)',
+                  padding: 6,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 2,
+                  animation: 'fadeIn 0.15s ease-out'
+                }}
+              >
+                <div style={{ padding: '6px 10px', fontSize: 10.5, fontWeight: 700, color: 'var(--t3)', textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid var(--border)' }}>
+                  Filter By Type
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, paddingTop: 4 }}>
+                  <div
+                    onClick={() => {
+                      setCategoryFilter('');
+                      setDropdownOpen(false);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '8px 10px',
+                      borderRadius: 8,
+                      cursor: 'pointer',
+                      background: categoryFilter === '' ? 'rgba(230, 95, 43, 0.12)' : 'transparent',
+                      color: categoryFilter === '' ? 'var(--acc, #E65F2B)' : 'var(--t1)',
+                      fontWeight: categoryFilter === '' ? 800 : 600,
+                      fontSize: 12.5,
+                      border: categoryFilter === '' ? '1px solid rgba(230,95,43,0.3)' : '1px solid transparent',
+                      transition: 'background 0.12s'
+                    }}
+                    onMouseEnter={e => categoryFilter !== '' && (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                    onMouseLeave={e => categoryFilter !== '' && (e.currentTarget.style.background = 'transparent')}
+                  >
+                    <span>All Types</span>
+                    {categoryFilter === '' && (
+                      <span style={{ color: 'var(--acc, #E65F2B)', fontWeight: 900, fontSize: 13 }}>✓</span>
+                    )}
+                  </div>
+                  {Object.entries(CATEGORY_LABELS).map(([catKey, catLabel]) => {
+                    const isSelected = categoryFilter === catKey;
+                    return (
+                      <div
+                        key={catKey}
+                        onClick={() => {
+                          setCategoryFilter(catKey);
+                          setDropdownOpen(false);
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '8px 10px',
+                          borderRadius: 8,
+                          cursor: 'pointer',
+                          background: isSelected ? 'rgba(230, 95, 43, 0.12)' : 'transparent',
+                          color: isSelected ? 'var(--acc, #E65F2B)' : 'var(--t1)',
+                          fontWeight: isSelected ? 800 : 600,
+                          fontSize: 12.5,
+                          border: isSelected ? '1px solid rgba(230,95,43,0.3)' : '1px solid transparent',
+                          transition: 'background 0.12s'
+                        }}
+                        onMouseEnter={e => !isSelected && (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                        onMouseLeave={e => !isSelected && (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <span>{catLabel}</span>
+                        {isSelected && (
+                          <span style={{ color: 'var(--acc, #E65F2B)', fontWeight: 900, fontSize: 13 }}>✓</span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
       {/* Grid */}
       {loading ? (

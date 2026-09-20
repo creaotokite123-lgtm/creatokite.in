@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Trophy, TrendingUp, Zap, Heart, CheckCircle2, Star,
-  Search, RefreshCw, Crown, Users, Filter,
+  Search, RefreshCw, Crown, Users, Filter, ChevronDown, Check
 } from 'lucide-react';
 import { adminAPI } from '../../api';
 import { Avatar, PageLoader, EmptyState } from '../../components/ui';
@@ -160,11 +160,23 @@ const SCORE_MAP = {
    ══════════════════════════════════════════════════════ */
 export default function AdminLeaderboard() {
   const [activeType, setActiveType] = useState('overall');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [creators,   setCreators]   = useState([]);
   const [loading,    setLoading]    = useState(true);
   const [search,     setSearch]     = useState('');
   const [page,       setPage]       = useState(1);
   const [total,      setTotal]      = useState(0);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const activeTypeMeta  = TYPES.find(t => t.key === activeType);
   const { key: scoreKey, label: scoreLabel } = SCORE_MAP[activeType];
@@ -211,31 +223,133 @@ export default function AdminLeaderboard() {
         </div>
       </div>
 
-      {/* ── Type filter tabs ─────────────────────────── */}
-      <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:20 }}>
-        {TYPES.map(t => {
-          const TIcon = t.icon;
-          const isActive = activeType === t.key;
-          return (
-            <button
-              key={t.key}
-              onClick={() => setActiveType(t.key)}
+      {/* ── Type filter dropdown ─────────────────────── */}
+      <div style={{ marginBottom: 18 }}>
+        <div ref={dropdownRef} style={{ position: 'relative', width: '100%', maxWidth: 320 }}>
+          <button
+            type="button"
+            onClick={() => setDropdownOpen(o => !o)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+              width: '100%',
+              padding: '9px 14px',
+              borderRadius: 12,
+              background: 'var(--s1, #161822)',
+              border: dropdownOpen ? `1.5px solid ${color}` : '1px solid var(--border)',
+              color: 'var(--t1)',
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: dropdownOpen ? `0 0 0 3px ${color}20` : 'none',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{
+                width: 28,
+                height: 28,
+                borderRadius: 8,
+                background: `${color}18`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: color
+              }}>
+                <Icon size={15} />
+              </div>
+              <span style={{ fontSize: 13.5, fontWeight: 750 }}>{activeTypeMeta?.label}</span>
+            </div>
+            <ChevronDown size={14} style={{ transform: dropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', color: 'var(--t3)' }} />
+          </button>
+
+          {/* Dropdown Menu */}
+          {dropdownOpen && (
+            <div
               style={{
-                display:'flex', alignItems:'center', gap:6,
-                padding:'8px 14px', borderRadius:'var(--r)',
-                background: isActive ? `${t.color}18` : 'var(--glass-bg)',
-                border: isActive ? `1px solid ${t.color}40` : '1px solid var(--glass-border)',
-                color: isActive ? t.color : 'var(--t2)',
-                fontWeight: isActive ? 700 : 500,
-                fontSize:12, cursor:'pointer', transition:'all 0.15s',
-                backdropFilter:'blur(8px)',
+                position: 'absolute',
+                top: 'calc(100% + 6px)',
+                left: 0,
+                zIndex: 100,
+                width: '100%',
+                minWidth: 280,
+                maxHeight: 360,
+                overflowY: 'auto',
+                background: 'var(--s1, #161822)',
+                border: '1px solid var(--border, rgba(255,255,255,0.12))',
+                borderRadius: 14,
+                boxShadow: '0 16px 36px rgba(0,0,0,0.45)',
+                padding: 6,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                animation: 'fadeIn 0.15s ease-out'
               }}
             >
-              <TIcon size={13}/>
-              {t.label}
-            </button>
-          );
-        })}
+              <div style={{ padding: '6px 10px', fontSize: 10.5, fontWeight: 700, color: 'var(--t3)', textTransform: 'uppercase', letterSpacing: 0.5, borderBottom: '1px solid var(--border)' }}>
+                Leaderboard Category
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2, paddingTop: 4 }}>
+                {TYPES.map(t => {
+                  const isSelected = activeType === t.key;
+                  const TIcon = t.icon;
+                  return (
+                    <div
+                      key={t.key}
+                      onClick={() => {
+                        setActiveType(t.key);
+                        setDropdownOpen(false);
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '8px 10px',
+                        borderRadius: 10,
+                        cursor: 'pointer',
+                        background: isSelected ? `${t.color}15` : 'transparent',
+                        color: isSelected ? 'var(--t1)' : 'var(--t2)',
+                        border: isSelected ? `1px solid ${t.color}35` : '1px solid transparent',
+                        transition: 'background 0.12s'
+                      }}
+                      onMouseEnter={e => !isSelected && (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                      onMouseLeave={e => !isSelected && (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{
+                          width: 26,
+                          height: 26,
+                          borderRadius: 7,
+                          background: isSelected ? `${t.color}25` : 'rgba(255,255,255,0.05)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: isSelected ? t.color : 'var(--t3)',
+                          flexShrink: 0
+                        }}>
+                          <TIcon size={14} />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 12.5, fontWeight: isSelected ? 800 : 600, color: isSelected ? t.color : 'var(--t1)' }}>
+                            {t.label}
+                          </div>
+                          <div style={{ fontSize: 10.5, color: 'var(--t3)', lineHeight: 1.2, marginTop: 1 }}>
+                            {t.desc}
+                          </div>
+                        </div>
+                      </div>
+                      {isSelected && (
+                        <span style={{ color: t.color, fontWeight: 900, fontSize: 13 }}>✓</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* ── Active type description ──────────────────── */}

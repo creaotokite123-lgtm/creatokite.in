@@ -457,11 +457,11 @@ export default function Sidebar({ isOpen, onClose }) {
         {/* ── Creative User Card + Logout ─────────────────────── */}
         <div style={{ padding: '10px 10px 12px', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
           <div
+            className="sidebar-user-card"
             style={{
               display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px',
               borderRadius: 14,
               background: 'linear-gradient(135deg, rgba(230, 95, 43, 0.08) 0%, rgba(212, 162, 76, 0.04) 100%), var(--s1, #FAF7F2)',
-              marginBottom: 8,
               border: '1px solid rgba(230, 95, 43, 0.25)',
               boxShadow: '0 4px 14px rgba(230, 95, 43, 0.06)',
               transition: 'all 0.22s cubic-bezier(0.25, 1, 0.5, 1)',
@@ -490,7 +490,7 @@ export default function Sidebar({ isOpen, onClose }) {
             </div>
 
             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13.5, fontWeight: '800', color: 'var(--t1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.2, marginBottom: 3 }}>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13.5, fontWeight: '800', color: 'var(--t1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.2, marginBottom: 3, maxWidth: '100%' }}>
                 {user?.displayName}
               </div>
               <div style={{
@@ -504,10 +504,46 @@ export default function Sidebar({ isOpen, onClose }) {
                 {activeRole?.replace('_', ' ')}
               </div>
             </div>
+
+            {/* Mobile / Small Screen Icon-only Sign Out at Rightmost Corner */}
+            <button
+              onClick={handleLogout}
+              className="sidebar-card-logout show-mobile"
+              title="Sign Out"
+              aria-label="Sign Out"
+              style={{
+                flexShrink: 0,
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                background: 'rgba(230, 95, 43, 0.1)',
+                border: '1px solid rgba(230, 95, 43, 0.25)',
+                color: 'var(--acc, #E65F2B)',
+                cursor: 'pointer',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 0,
+                transition: 'all 0.18s ease',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(230, 95, 43, 0.22)';
+                e.currentTarget.style.borderColor = 'rgba(230, 95, 43, 0.45)';
+                e.currentTarget.style.transform = 'scale(1.06)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'rgba(230, 95, 43, 0.1)';
+                e.currentTarget.style.borderColor = 'rgba(230, 95, 43, 0.25)';
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
+            >
+              <LogOut size={15} />
+            </button>
           </div>
 
+          {/* Desktop full-width Sign Out button */}
           <button
             onClick={handleLogout}
+            className="sidebar-bottom-logout hide-mobile"
             style={{
               width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '9px 12px',
               borderRadius: 10, background: 'rgba(230, 95, 43, 0.06)', border: '1px solid rgba(230, 95, 43, 0.16)', cursor: 'pointer',
