@@ -232,7 +232,7 @@ Open `http://localhost:5173` in your browser.
 
 | Role | Email | Password | Access Level |
 | :--- | :--- | :--- | :--- |
-| **Superadmin** | `admin@creatokite.in` | `Admin@12345` | Full system control & role manager |
+| **Superadmin** | `admin@creatokite.com` | `Admin@12345` | Full system control & role manager |
 | **Brand** | `brand@demo.com` | `Demo@12345` | Campaign creation & creator sourcing |
 | **Creator** | `creator1@demo.com` | `Demo@12345` | Application submissions & CAS dashboard |
 
