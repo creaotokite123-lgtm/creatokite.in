@@ -949,8 +949,9 @@ export default function Register() {
             {/* Google SSO Button */}
             <button
               onClick={() => {
-                const API = import.meta.env.VITE_API_URL || '/api';
-                window.location.href = `${API}/auth/google`;
+                const rawApi = (import.meta.env.VITE_API_URL || '').trim().replace(/\/+$/, '');
+                const apiBase = !rawApi ? '/api' : rawApi.endsWith('/api') ? rawApi : `${rawApi}/api`;
+                window.location.href = `${apiBase}/auth/google`;
               }}
               className="login-google-btn"
             >
