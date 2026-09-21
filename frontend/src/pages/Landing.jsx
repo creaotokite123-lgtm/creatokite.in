@@ -3971,8 +3971,7 @@ export default function Landing() {
           }
           .hero { min-height: auto; padding-top: 120px; padding-bottom: 60px; }
           .hero-grid { grid-template-columns: 1fr; gap: 40px; }
-          .hero-art-container { height: 440px; max-width: 100%; margin: 0 auto; overflow: hidden; }
-          .hero-cards-wrapper { transform: scale(0.85); transform-origin: center center; }
+          .hero-art-container { display: none !important; }
 
           .spotlight-cards-grid {
             grid-template-columns: 1fr !important;
@@ -4018,33 +4017,7 @@ export default function Landing() {
           
           .hero { padding-top: 90px; padding-bottom: 20px; overflow: hidden; }
           .hero-art-container {
-            height: 360px !important;
-            max-width: 100% !important;
-            width: 100% !important;
-            margin: 15px auto 0 auto !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            position: relative !important;
-            overflow: visible !important;
-          }
-          .hero-cards-wrapper {
-            position: absolute !important;
-            left: 50% !important;
-            top: 52% !important;
-            transform: translate(-50%, -50%) scale(0.56) !important;
-            transform-origin: center center !important;
-            margin: 0 !important;
-            width: 520px !important;
-            height: 480px !important;
-          }
-          .hero-blob-backdrop {
-            position: absolute !important;
-            left: 50% !important;
-            top: 50% !important;
-            transform: translate(-50%, -50%) scale(0.80) !important;
-            width: 100% !important;
-            height: 100% !important;
+            display: none !important;
           }
           
           .hero-actions {
@@ -4074,16 +4047,6 @@ export default function Landing() {
           #landing-page-root .hero h1.hero-title-serif em {
             font-weight: 700 !important;
           }
-
-        @media(max-width: 440px){
-          .hero-art-container {
-            height: 310px !important;
-          }
-          .hero-cards-wrapper {
-            transform: translate(-50%, -50%) scale(0.48) !important;
-            top: 52% !important;
-          }
-        }
 
           /* How It Works Steps on Mobile */
           .step {
