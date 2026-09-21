@@ -116,77 +116,198 @@ export default function AdminUsers() {
         )}
       </div>
 
+      <style>{`
+        .admin-users-table-wrap {
+          display: block;
+        }
+        .admin-users-cards-view {
+          display: none;
+        }
+        @media (max-width: 768px) {
+          .admin-users-table-wrap {
+            display: none !important;
+          }
+          .admin-users-cards-view {
+            display: flex !important;
+            flex-direction: column;
+            gap: 10px;
+          }
+        }
+      `}</style>
+
       {loading ? <PageLoader />
         : users.length === 0 ? <EmptyState icon="👤" title="No users found" desc="Try different filters" />
-          : <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-            <div className="table-wrap" style={{ overflowX: 'auto', width: '100%' }}>
-              <table style={{ width: '100%', minWidth: 680 }}>
-                <thead>
-                  <tr><th>User</th><th>Role(s)</th><th>Niche / Company</th><th>Status</th><th>Score</th><th>Joined</th><th>Actions</th></tr>
-                </thead>
-                <tbody>
-                  {users.map(u => (
-                    <tr key={u._id} style={{ opacity: u.isBanned ? 0.55 : 1 }}>
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <Avatar src={u.avatar} name={u.displayName} size={32} />
-                          <div style={{ minWidth: 0 }}>
-                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--t1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 150 }}>{u.displayName}</div>
-                            <div style={{ fontSize: 10, color: 'var(--t3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 150 }}>
-                              {u.email ? (
-                                <a
-                                  href={`mailto:${u.email}`}
-                                  onClick={e => e.stopPropagation()}
-                                  style={{ color: 'var(--t3)', textDecoration: 'none' }}
-                                  onMouseEnter={e => e.currentTarget.style.color = 'var(--acc)'}
-                                  onMouseLeave={e => e.currentTarget.style.color = 'var(--t3)'}
-                                  title={`Send email to ${u.email}`}
-                                >
-                                  {u.email}
-                                </a>
-                              ) : '—'}
+          : <div>
+            {/* ── Desktop Table View ─────────────────────────────── */}
+            <div className="card admin-users-table-wrap" style={{ padding: 0, overflow: 'hidden' }}>
+              <div className="table-wrap" style={{ overflowX: 'auto', width: '100%' }}>
+                <table style={{ width: '100%', minWidth: 680 }}>
+                  <thead>
+                    <tr><th>User</th><th>Role(s)</th><th>Niche / Company</th><th>Status</th><th>Score</th><th>Joined</th><th>Actions</th></tr>
+                  </thead>
+                  <tbody>
+                    {users.map(u => (
+                      <tr key={u._id} style={{ opacity: u.isBanned ? 0.55 : 1 }}>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <Avatar src={u.avatar} name={u.displayName} size={32} />
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--t1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 150 }}>{u.displayName}</div>
+                              <div style={{ fontSize: 10, color: 'var(--t3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 150 }}>
+                                {u.email ? (
+                                  <a
+                                    href={`mailto:${u.email}`}
+                                    onClick={e => e.stopPropagation()}
+                                    style={{ color: 'var(--t3)', textDecoration: 'none' }}
+                                    onMouseEnter={e => e.currentTarget.style.color = 'var(--acc)'}
+                                    onMouseLeave={e => e.currentTarget.style.color = 'var(--t3)'}
+                                    title={`Send email to ${u.email}`}
+                                  >
+                                    {u.email}
+                                  </a>
+                                ) : '—'}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-                          {(u.roles?.length ? u.roles : [u.role]).map(r => (
-                            <span key={r} className={`badge badge-${r === 'admin' ? 'gold' : r === 'superadmin' ? 'red' : r === 'brand' ? 'blue' : r === 'team_member' ? 'indigo' : 'green'}`} style={{ fontSize: 9 }}>{r}</span>
-                          ))}
-                        </div>
-                      </td>
-                      <td style={{ fontSize: 12, color: 'var(--t2)', fontWeight: 500 }}>{u.niche || u.companyName || '—'}</td>
-                      <td>
-                        <span className={`badge ${u.isBanned ? 'badge-red' : u.isVerified ? 'badge-green' : 'badge-gray'}`} style={{ fontSize: 10 }}>
-                          {u.isBanned ? 'Banned' : u.isVerified ? 'Verified' : 'Unverified'}
-                        </span>
-                      </td>
-                      <td style={{ fontFamily: 'var(--fd)', fontWeight: 700, fontSize: 13, color: 'var(--p)' }}>{u.creatorScore || 0}</td>
-                      <td style={{ fontSize: 11, color: 'var(--t3)', whiteSpace: 'nowrap' }}>{new Date(u.createdAt).toLocaleDateString('en-IN')}</td>
-                      <td>
-                        <div style={{ display: 'flex', gap: 4 }}>
-                          <button onClick={() => setSelected(u)} className="btn btn-ghost btn-sm" style={{ fontSize: 10, padding: '3px 6px' }} title="Details"><Eye size={11} /></button>
-                          <button onClick={() => navigate('/admin/roles')} className="btn btn-ghost btn-sm" style={{ fontSize: 10, padding: '3px 6px' }} title="Manage roles"><UserCog size={11} /></button>
-                          <button onClick={() => toggleBan(u)} disabled={banning === u._id} className="btn btn-ghost btn-sm" style={{ fontSize: 10, padding: '3px 6px', color: 'var(--rose)' }} title={u.isBanned ? 'Unban' : 'Ban'}>
-                            <Ban size={11} />
-                          </button>
-                          {(u.role === 'creator' || u.roles?.includes('creator')) && (
-                            <button onClick={() => recalc(u._id)} className="btn btn-ghost btn-sm" style={{ fontSize: 10, padding: '3px 6px', color: 'var(--gold)' }} title="Recalculate score"><RefreshCw size={11} /></button>
-                          )}
-                          <button onClick={() => setDeleteTarget(u)} className="btn btn-ghost btn-sm" style={{ fontSize: 10, padding: '3px 6px', color: '#ef4444' }} title="Delete User">
-                            <Trash2 size={11} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
+                            {(u.roles?.length ? u.roles : [u.role]).map(r => (
+                              <span key={r} className={`badge badge-${r === 'admin' ? 'gold' : r === 'superadmin' ? 'red' : r === 'brand' ? 'blue' : r === 'team_member' ? 'indigo' : 'green'}`} style={{ fontSize: 9 }}>{r}</span>
+                            ))}
+                          </div>
+                        </td>
+                        <td style={{ fontSize: 12, color: 'var(--t2)', fontWeight: 500 }}>{u.niche || u.companyName || '—'}</td>
+                        <td>
+                          <span className={`badge ${u.isBanned ? 'badge-red' : u.isVerified ? 'badge-green' : 'badge-gray'}`} style={{ fontSize: 10 }}>
+                            {u.isBanned ? 'Banned' : u.isVerified ? 'Verified' : 'Unverified'}
+                          </span>
+                        </td>
+                        <td style={{ fontFamily: 'var(--fd)', fontWeight: 700, fontSize: 13, color: 'var(--p)' }}>{u.creatorScore || 0}</td>
+                        <td style={{ fontSize: 11, color: 'var(--t3)', whiteSpace: 'nowrap' }}>{new Date(u.createdAt).toLocaleDateString('en-IN')}</td>
+                        <td>
+                          <div style={{ display: 'flex', gap: 4 }}>
+                            <button onClick={() => setSelected(u)} className="btn btn-ghost btn-sm" style={{ fontSize: 10, padding: '3px 6px' }} title="Details"><Eye size={11} /></button>
+                            <button onClick={() => navigate('/admin/roles')} className="btn btn-ghost btn-sm" style={{ fontSize: 10, padding: '3px 6px' }} title="Manage roles"><UserCog size={11} /></button>
+                            <button onClick={() => toggleBan(u)} disabled={banning === u._id} className="btn btn-ghost btn-sm" style={{ fontSize: 10, padding: '3px 6px', color: 'var(--rose)' }} title={u.isBanned ? 'Unban' : 'Ban'}>
+                              <Ban size={11} />
+                            </button>
+                            {(u.role === 'creator' || u.roles?.includes('creator')) && (
+                              <button onClick={() => recalc(u._id)} className="btn btn-ghost btn-sm" style={{ fontSize: 10, padding: '3px 6px', color: 'var(--gold)' }} title="Recalculate score"><RefreshCw size={11} /></button>
+                            )}
+                            <button onClick={() => setDeleteTarget(u)} className="btn btn-ghost btn-sm" style={{ fontSize: 10, padding: '3px 6px', color: '#ef4444' }} title="Delete User">
+                              <Trash2 size={11} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
+
+            {/* ── Mobile Card Format View ────────────────────────── */}
+            <div className="admin-users-cards-view">
+              {users.map(u => (
+                <div
+                  key={u._id}
+                  style={{
+                    background: 'var(--s1)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 14,
+                    padding: '14px 16px',
+                    opacity: u.isBanned ? 0.6 : 1,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 10,
+                  }}
+                >
+                  {/* Top Header: Avatar + User Info + Status Badge */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0, flex: 1 }}>
+                      <Avatar src={u.avatar} name={u.displayName} size={38} />
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--t1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {u.displayName}
+                        </div>
+                        <div style={{ fontSize: 11, color: 'var(--t3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 1 }}>
+                          {u.email ? (
+                            <a
+                              href={`mailto:${u.email}`}
+                              style={{ color: 'var(--t3)', textDecoration: 'none' }}
+                              onClick={e => e.stopPropagation()}
+                            >
+                              {u.email}
+                            </a>
+                          ) : '—'}
+                        </div>
+                      </div>
+                    </div>
+
+                    <span className={`badge ${u.isBanned ? 'badge-red' : u.isVerified ? 'badge-green' : 'badge-gray'}`} style={{ fontSize: 10, flexShrink: 0 }}>
+                      {u.isBanned ? 'Banned' : u.isVerified ? 'Verified' : 'Unverified'}
+                    </span>
+                  </div>
+
+                  {/* Meta Details Strip */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 6, padding: '7px 10px', background: 'var(--s2)', borderRadius: 8 }}>
+                    <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
+                      {(u.roles?.length ? u.roles : [u.role]).map(r => (
+                        <span
+                          key={r}
+                          className={`badge badge-${r === 'admin' ? 'gold' : r === 'superadmin' ? 'red' : r === 'brand' ? 'blue' : r === 'team_member' ? 'indigo' : 'green'}`}
+                          style={{ fontSize: 9.5, textTransform: 'capitalize' }}
+                        >
+                          {r?.replace('_', ' ')}
+                        </span>
+                      ))}
+                      {(u.niche || u.companyName) && (
+                        <span style={{ fontSize: 11, color: 'var(--t2)', fontWeight: 600 }}>
+                          • {u.niche || u.companyName}
+                        </span>
+                      )}
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: 'var(--t3)' }}>
+                      {(u.role === 'creator' || u.roles?.includes('creator')) && (
+                        <span style={{ fontFamily: 'var(--fd)', fontWeight: 700, color: 'var(--p)' }}>
+                          ⚡ {u.creatorScore || 0}
+                        </span>
+                      )}
+                      <span>{new Date(u.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
+                    </div>
+                  </div>
+
+                  {/* Actions Row */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 5, paddingTop: 4, borderTop: '1px solid var(--border)' }}>
+                    <button onClick={() => setSelected(u)} className="btn btn-ghost btn-sm" style={{ fontSize: 11, padding: '4px 8px', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                      <Eye size={12} /> View
+                    </button>
+                    <button onClick={() => navigate('/admin/roles')} className="btn btn-ghost btn-sm" style={{ fontSize: 11, padding: '4px 8px', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                      <UserCog size={12} /> Roles
+                    </button>
+                    {(u.role === 'creator' || u.roles?.includes('creator')) && (
+                      <button onClick={() => recalc(u._id)} className="btn btn-ghost btn-sm" style={{ fontSize: 11, padding: '4px 8px', color: 'var(--gold)' }} title="Recalculate Score">
+                        <RefreshCw size={12} />
+                      </button>
+                    )}
+                    <button onClick={() => toggleBan(u)} disabled={banning === u._id} className="btn btn-ghost btn-sm" style={{ fontSize: 11, padding: '4px 8px', color: 'var(--rose)' }} title={u.isBanned ? 'Unban' : 'Ban'}>
+                      <Ban size={12} /> {u.isBanned ? 'Unban' : 'Ban'}
+                    </button>
+                    <button onClick={() => setDeleteTarget(u)} className="btn btn-ghost btn-sm" style={{ fontSize: 11, padding: '4px 8px', color: '#ef4444' }} title="Delete User">
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
             {total > 20 && (
-              <div style={{ padding: '10px 14px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 11, color: 'var(--t3)' }}>{users.length} of {total}</span>
+              <div style={{ padding: '12px 14px', marginTop: 10, background: 'var(--s1)', borderRadius: 12, border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11.5, color: 'var(--t3)' }}>{users.length} of {total}</span>
                 <div style={{ display: 'flex', gap: 6 }}>
                   <button onClick={() => { setPage(p => Math.max(1, p - 1)); load(page - 1); }} disabled={page === 1} className="btn btn-secondary btn-sm">Prev</button>
                   <button onClick={() => { setPage(p => p + 1); load(page + 1); }} disabled={users.length < 20} className="btn btn-secondary btn-sm">Next</button>

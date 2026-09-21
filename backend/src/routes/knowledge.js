@@ -42,7 +42,7 @@ router.put('/:id', teamOrAdmin, async (req,res) => {
     const allowed=['title','content','category','tags','visibility','isPublished','isPinned'];
     const update={};
     allowed.forEach(k=>{if(req.body[k]!==undefined)update[k]=req.body[k];});
-    const article = await KnowledgeArticle.findByIdAndUpdate(req.params.id,update,{new:true});
+    const article = await KnowledgeArticle.findByIdAndUpdate(req.params.id,update,{new:true}).populate('author','displayName avatar');
     if(!article) return res.status(404).json({success:false,message:'Not found'});
     res.json({success:true,article});
   } catch(e){res.status(500).json({success:false,message:e.message});}

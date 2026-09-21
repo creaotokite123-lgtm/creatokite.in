@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BookOpen, Plus, Search, Pin, Eye, User, Tag, Sparkles, X, ChevronRight, ChevronDown } from 'lucide-react';
+import { BookOpen, Plus, Search, Pin, Eye, User, Tag, Sparkles, X, ChevronRight, ChevronDown, Edit3, Trash2, AlertTriangle, Check } from 'lucide-react';
 import { knowledgeAPI } from '../../api';
 import { Modal, EmptyState } from '../../components/ui';
 import { useAuth } from '../../contexts/AuthContext';
@@ -63,14 +63,20 @@ export function renderContentWithLinks(text, isPreview = false) {
 
 export default function KnowledgeBase() {
   const { hasRole } = useAuth();
-  const canEdit = hasRole('admin') || hasRole('superadmin') || hasRole('team_member');
+  const isAdmin = hasRole('admin') || hasRole('superadmin');
+  const canEdit = isAdmin || hasRole('team_member');
+  const canDelete = isAdmin;
+
   const [articles, setArticles] = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [search,   setSearch]   = useState('');
   const [catFilter,setCatFilter]= useState('');
   const [showForm, setShowForm] = useState(false);
+  const [editingArticle, setEditingArticle] = useState(null);
+  const [deletingArticle, setDeletingArticle] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const [reading,  setReading]  = useState(null);
-  const [form, setForm] = useState({ title:'', content:'', category:'general', tags:'', visibility:'team_only', isPublished:true });
+  const [form, setForm] = useState({ title:'', content:'', category:'general', tags:'', visibility:'team_only', isPinned: false, isPublished:true });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -87,15 +93,80 @@ export default function KnowledgeBase() {
     finally { setLoading(false); }
   }
 
-  async function handleSave(e) {
-    e.preventDefault(); setSaving(true);
+  function handleOpenCreate() {
+    setEditingArticle(null);
+    setForm({ title:'', content:'', category:'general', tags:'', visibility:'team_only', isPinned: false, isPublished: true });
+    setShowForm(true);
+  }
+
+  function handleOpenEdit(article, e) {
+    if (e) e.stopPropagation();
+    setEditingArticle(article);
+    setForm({
+      title: article.title || '',
+      content: article.content || '',
+      category: article.category || 'general',
+      tags: Array.isArray(article.tags) ? article.tags.join(', ') : (article.tags || ''),
+      visibility: article.visibility || 'team_only',
+      isPinned: !!article.isPinned,
+      isPublished: article.isPublished !== undefined ? article.isPublished : true,
+    });
+    setShowForm(true);
+  }
+
+  function handleDeletePrompt(article, e) {
+    if (e) e.stopPropagation();
+    setDeletingArticle(article);
+  }
+
+  async function handleConfirmDelete() {
+    if (!deletingArticle) return;
+    setDeleting(true);
     try {
-      await knowledgeAPI.create({ ...form, tags: form.tags ? form.tags.split(',').map(t => t.trim()) : [], isPublished: true });
-      toast.success('Article published successfully!'); setShowForm(false);
-      setForm({ title:'', content:'', category:'general', tags:'', visibility:'team_only', isPublished: true });
+      await knowledgeAPI.delete(deletingArticle._id);
+      toast.success('Article deleted successfully!');
+      if (reading?._id === deletingArticle._id) {
+        setReading(null);
+      }
+      setDeletingArticle(null);
       load();
-    } catch(e) { toast.error('Failed to create article'); }
-    finally { setSaving(false); }
+    } catch(e) {
+      toast.error(e?.response?.data?.message || 'Failed to delete article');
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  async function handleSave(e) {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const payload = {
+        ...form,
+        tags: form.tags ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+        isPublished: true,
+      };
+
+      if (editingArticle) {
+        const res = await knowledgeAPI.update(editingArticle._id, payload);
+        toast.success('Article updated successfully!');
+        if (reading?._id === editingArticle._id) {
+          setReading(res.article || { ...reading, ...payload });
+        }
+      } else {
+        await knowledgeAPI.create(payload);
+        toast.success('Article published successfully!');
+      }
+
+      setShowForm(false);
+      setEditingArticle(null);
+      setForm({ title:'', content:'', category:'general', tags:'', visibility:'team_only', isPinned: false, isPublished: true });
+      load();
+    } catch(e) {
+      toast.error(editingArticle ? 'Failed to update article' : 'Failed to create article');
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function openArticle(a) {
@@ -129,7 +200,7 @@ export default function KnowledgeBase() {
 
         {canEdit && (
           <button
-            onClick={() => setShowForm(true)}
+            onClick={handleOpenCreate}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 8, height: 42, padding: '0 22px', borderRadius: 12,
               background: 'var(--acc)', color: '#FFF', border: 'none', fontWeight: 800, fontSize: 13.5, cursor: 'pointer',
@@ -209,7 +280,7 @@ export default function KnowledgeBase() {
                 style={{
                   background: 'var(--s1)', borderRadius: 20, border: '1px solid var(--border)',
                   padding: 22, cursor: 'pointer', transition: 'all 0.2s', display: 'flex', flexDirection: 'column',
-                  justifyContent: 'space-between', boxShadow: 'var(--glass-shadow)'
+                  justifyContent: 'space-between', boxShadow: 'var(--glass-shadow)', position: 'relative'
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.transform = 'translateY(-3px)';
@@ -223,14 +294,74 @@ export default function KnowledgeBase() {
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                    <span style={{
-                      fontSize: 11, padding: '3px 10px', borderRadius: 99, fontWeight: 800,
-                      background: `${catColor}18`, color: catColor, border: `1px solid ${catColor}35`
-                    }}>
-                      {CAT_LABELS[a.category] || a.category?.replace('_', ' ')}
-                    </span>
-                    {a.isPinned && <Pin size={14} style={{ color: 'var(--acc)' }} />}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, gap: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                      <span style={{
+                        fontSize: 11, padding: '3px 10px', borderRadius: 99, fontWeight: 800,
+                        background: `${catColor}18`, color: catColor, border: `1px solid ${catColor}35`
+                      }}>
+                        {CAT_LABELS[a.category] || a.category?.replace('_', ' ')}
+                      </span>
+                      {a.isPinned && (
+                        <span title="Pinned article" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--acc)' }}>
+                          <Pin size={13} style={{ transform: 'rotate(45deg)' }} />
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Admin/Team Actions */}
+                    {(canEdit || canDelete) && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }} onClick={e => e.stopPropagation()}>
+                        {canEdit && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleOpenEdit(a, e)}
+                            title="Edit article"
+                            style={{
+                              width: 28, height: 28, borderRadius: 8, border: '1px solid var(--border)',
+                              background: 'var(--s2)', color: 'var(--t2)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                              cursor: 'pointer', transition: 'all 0.18s ease'
+                            }}
+                            onMouseEnter={e => {
+                              e.currentTarget.style.color = 'var(--acc)';
+                              e.currentTarget.style.borderColor = 'var(--acc)';
+                              e.currentTarget.style.background = 'rgba(230,95,43,0.12)';
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.style.color = 'var(--t2)';
+                              e.currentTarget.style.borderColor = 'var(--border)';
+                              e.currentTarget.style.background = 'var(--s2)';
+                            }}
+                          >
+                            <Edit3 size={13} />
+                          </button>
+                        )}
+                        {canDelete && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleDeletePrompt(a, e)}
+                            title="Delete article"
+                            style={{
+                              width: 28, height: 28, borderRadius: 8, border: '1px solid var(--border)',
+                              background: 'var(--s2)', color: 'var(--t2)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                              cursor: 'pointer', transition: 'all 0.18s ease'
+                            }}
+                            onMouseEnter={e => {
+                              e.currentTarget.style.color = '#EF4444';
+                              e.currentTarget.style.borderColor = '#EF4444';
+                              e.currentTarget.style.background = 'rgba(239,68,68,0.12)';
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.style.color = 'var(--t2)';
+                              e.currentTarget.style.borderColor = 'var(--border)';
+                              e.currentTarget.style.background = 'var(--s2)';
+                            }}
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <h3 style={{
@@ -267,21 +398,66 @@ export default function KnowledgeBase() {
       )}
 
       {/* Read Article Modal */}
-      <Modal open={!!reading} onClose={() => setReading(null)} title={reading?.title || 'Article Details'} maxWidth={640}>
+      <Modal open={!!reading} onClose={() => setReading(null)} title={reading?.title || 'Article Details'} maxWidth={680}>
         {reading && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', paddingBottom: 12, borderBottom: '1px solid var(--border)' }}>
-              <span style={{
-                fontSize: 11.5, padding: '4px 12px', borderRadius: 99, fontWeight: 800,
-                background: `${CAT_CLR[reading.category] || 'var(--acc)'}18`,
-                color: CAT_CLR[reading.category] || 'var(--acc)',
-                border: `1px solid ${CAT_CLR[reading.category] || 'var(--acc)'}35`
-              }}>
-                {CAT_LABELS[reading.category] || reading.category?.replace('_', ' ')}
-              </span>
-              <span style={{ fontSize: 12, color: 'var(--t2)', fontWeight: 500 }}>
-                Author: <strong style={{ color: 'var(--t1)' }}>{reading.author?.displayName || 'CreatoKite Team'}</strong> · {reading.viewCount || 0} views
-              </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, paddingBottom: 12, borderBottom: '1px solid var(--border)' }}>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+                <span style={{
+                  fontSize: 11.5, padding: '4px 12px', borderRadius: 99, fontWeight: 800,
+                  background: `${CAT_CLR[reading.category] || 'var(--acc)'}18`,
+                  color: CAT_CLR[reading.category] || 'var(--acc)',
+                  border: `1px solid ${CAT_CLR[reading.category] || 'var(--acc)'}35`
+                }}>
+                  {CAT_LABELS[reading.category] || reading.category?.replace('_', ' ')}
+                </span>
+                <span style={{ fontSize: 12, color: 'var(--t2)', fontWeight: 500 }}>
+                  Author: <strong style={{ color: 'var(--t1)' }}>{reading.author?.displayName || 'CreatoKite Team'}</strong> · {reading.viewCount || 0} views
+                </span>
+              </div>
+
+              {/* Action Buttons inside Reader */}
+              {(canEdit || canDelete) && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {canEdit && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const target = reading;
+                        setReading(null);
+                        handleOpenEdit(target);
+                      }}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 6, height: 32, padding: '0 12px', borderRadius: 8,
+                        background: 'var(--s2)', color: 'var(--t1)', border: '1px solid var(--border)', fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                        transition: 'all 0.18s'
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.color = 'var(--acc)'; e.currentTarget.style.borderColor = 'var(--acc)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.color = 'var(--t1)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
+                    >
+                      <Edit3 size={13} /> Edit
+                    </button>
+                  )}
+                  {canDelete && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const target = reading;
+                        handleDeletePrompt(target);
+                      }}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 6, height: 32, padding: '0 12px', borderRadius: 8,
+                        background: 'rgba(239,68,68,0.08)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.25)', fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                        transition: 'all 0.18s'
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.16)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; }}
+                    >
+                      <Trash2 size={13} /> Delete
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
 
             <div style={{
@@ -307,8 +483,13 @@ export default function KnowledgeBase() {
         )}
       </Modal>
 
-      {/* Create Article Modal */}
-      <Modal open={showForm} onClose={() => setShowForm(false)} title="Create New Knowledge Article" maxWidth={580}>
+      {/* Create / Edit Article Modal */}
+      <Modal
+        open={showForm}
+        onClose={() => { setShowForm(false); setEditingArticle(null); }}
+        title={editingArticle ? 'Edit Knowledge Article' : 'Create New Knowledge Article'}
+        maxWidth={580}
+      >
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
             <label style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--t2)', display: 'block', marginBottom: 6 }}>Article Title *</label>
@@ -362,9 +543,24 @@ export default function KnowledgeBase() {
             />
           </div>
 
+          {/* Pin toggle for admins */}
+          {isAdmin && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0' }}>
+              <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600, color: 'var(--t1)' }}>
+                <input
+                  type="checkbox"
+                  checked={form.isPinned}
+                  onChange={e => setForm(p => ({ ...p, isPinned: e.target.checked }))}
+                  style={{ accentColor: 'var(--acc)', width: 16, height: 16, cursor: 'pointer' }}
+                />
+                Pin article to top of Knowledge Base
+              </label>
+            </div>
+          )}
+
           <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 8 }}>
             <button
-              type="button" onClick={() => setShowForm(false)}
+              type="button" onClick={() => { setShowForm(false); setEditingArticle(null); }}
               style={{ padding: '10px 20px', borderRadius: 10, background: 'var(--s2)', border: '1px solid var(--border)', color: 'var(--t2)', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
             >
               Cancel
@@ -373,10 +569,62 @@ export default function KnowledgeBase() {
               type="submit" disabled={saving}
               style={{ padding: '10px 24px', borderRadius: 10, background: 'var(--acc)', border: 'none', color: '#FFF', fontWeight: 800, fontSize: 13, cursor: 'pointer', boxShadow: '0 4px 14px rgba(230,95,43,0.3)' }}
             >
-              {saving ? 'Publishing…' : 'Publish Article'}
+              {saving ? (editingArticle ? 'Updating…' : 'Publishing…') : (editingArticle ? 'Save Changes' : 'Publish Article')}
             </button>
           </div>
         </form>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        open={!!deletingArticle}
+        onClose={() => !deleting && setDeletingArticle(null)}
+        title="Confirm Deletion"
+        maxWidth={460}
+      >
+        {deletingArticle && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+              <div style={{
+                width: 44, height: 44, borderRadius: 12, background: 'rgba(239,68,68,0.12)', color: '#EF4444',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+              }}>
+                <AlertTriangle size={22} />
+              </div>
+              <div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: 15, fontWeight: 800, color: 'var(--t1)' }}>
+                  Delete Article?
+                </h4>
+                <p style={{ margin: 0, fontSize: 13, color: 'var(--t2)', lineHeight: 1.5 }}>
+                  Are you sure you want to delete <strong style={{ color: 'var(--t1)' }}>"{deletingArticle.title}"</strong>? This action cannot be undone.
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', paddingTop: 8, borderTop: '1px solid var(--border)' }}>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => setDeletingArticle(null)}
+                style={{ padding: '9px 18px', borderRadius: 10, background: 'var(--s2)', border: '1px solid var(--border)', color: 'var(--t2)', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={handleConfirmDelete}
+                style={{
+                  padding: '9px 20px', borderRadius: 10, background: '#EF4444', border: 'none', color: '#FFF',
+                  fontWeight: 800, fontSize: 13, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6,
+                  boxShadow: '0 4px 14px rgba(239,68,68,0.35)'
+                }}
+              >
+                {deleting ? 'Deleting…' : 'Delete Article'}
+              </button>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );
