@@ -11,6 +11,161 @@ import {
 } from 'lucide-react';
 
 /* ─────────────────────────────────────────────────────────────
+   TermsModal — Full CreatoKite Registration Legal Terms
+ ───────────────────────────────────────────────────────────── */
+function TermsModal({ onClose, role = 'creator' }) {
+  const [tab, setTab] = useState(role === 'brand' ? 'brand' : 'creator');
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 99999,
+      background: 'rgba(15, 14, 12, 0.78)', backdropFilter: 'blur(10px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20
+    }}>
+      <div style={{
+        width: '100%', maxWidth: 640, background: '#FFFFFF',
+        borderRadius: 20, border: '1px solid #E2DDD3',
+        boxShadow: '0 24px 70px rgba(0,0,0,0.3)', position: 'relative',
+        maxHeight: '85vh', display: 'flex', flexDirection: 'column',
+        overflow: 'hidden', fontFamily: 'Inter, sans-serif'
+      }}>
+        {/* Header */}
+        <div style={{
+          padding: '20px 24px', borderBottom: '1px solid #ECE7DE',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#FAF8F5'
+        }}>
+          <div>
+            <h3 style={{ fontSize: 18, fontWeight: 800, color: '#1F1C18', margin: 0 }}>
+              CreatoKite Terms of Service
+            </h3>
+            <p style={{ fontSize: 12, color: '#6E6B65', margin: '2px 0 0' }}>
+              Please read carefully before registering on CreatoKite
+            </p>
+          </div>
+          <button
+            type="button" onClick={onClose}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9C968B', padding: 4 }}
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Tab Switcher */}
+        <div style={{ display: 'flex', padding: '12px 24px 0', gap: 10, background: '#FAF8F5', borderBottom: '1px solid #ECE7DE' }}>
+          <button
+            type="button"
+            onClick={() => setTab('creator')}
+            style={{
+              padding: '8px 16px', borderRadius: '8px 8px 0 0', border: 'none',
+              background: tab === 'creator' ? '#FFFFFF' : 'transparent',
+              borderBottom: tab === 'creator' ? '2px solid #E65F2B' : '2px solid transparent',
+              color: tab === 'creator' ? '#E65F2B' : '#6E6B65',
+              fontWeight: 700, fontSize: 13, cursor: 'pointer'
+            }}
+          >
+            Creator Terms (10 Points)
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab('brand')}
+            style={{
+              padding: '8px 16px', borderRadius: '8px 8px 0 0', border: 'none',
+              background: tab === 'brand' ? '#FFFFFF' : 'transparent',
+              borderBottom: tab === 'brand' ? '2px solid #E65F2B' : '2px solid transparent',
+              color: tab === 'brand' ? '#E65F2B' : '#6E6B65',
+              fontWeight: 700, fontSize: 13, cursor: 'pointer'
+            }}
+          >
+            Brand Terms (8 Points)
+          </button>
+        </div>
+
+        {/* Content Body */}
+        <div style={{ padding: '20px 24px', overflowY: 'auto', flex: 1, fontSize: 13, color: '#3A3630', lineHeight: 1.6 }}>
+          {tab === 'creator' ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ background: '#FFF8F4', padding: '10px 14px', borderRadius: 8, border: '1px solid rgba(230,95,43,0.15)', color: '#E65F2B', fontWeight: 700, fontSize: 12 }}>
+                Effective immediately upon registration · CreatoKite Technologies
+              </div>
+              <div>
+                <strong>1. Platform Role:</strong> CreatoKite acts as a campaign coordination and creator participation platform connecting brands and creators for collaborative influencer campaigns. CreatoKite does not guarantee campaign allocation, fixed earnings, brand selection, or creator visibility in every campaign. Participation remains opportunity-based.
+              </div>
+              <div>
+                <strong>2. Creator Participation Model:</strong> Creators shall not be permanently assigned or exclusively mapped to any individual brand. Campaign opportunities are released on creator dashboards based on platform campaigns. Creators may voluntarily accept or reject campaigns. Acceptance does not guarantee final content selection or publishing rights.
+              </div>
+              <div>
+                <strong>3. Campaign Acceptance:</strong> Each campaign on your dashboard will contain: campaign duration, submission deadline, content requirements, platform rules, compensation model, and deliverables. Failure to respond within the campaign window may result in automatic expiration.
+              </div>
+              <div>
+                <strong>4. Content Submission &amp; Audit Rights:</strong> Upon campaign acceptance you may submit content assets. CreatoKite reserves the right to review, audit, reject, edit, shortlist and optimise content. Submission does not guarantee selection.
+              </div>
+              <div>
+                <strong>5. Internal Selection Mechanism:</strong> CreatoKite may internally shortlist top-performing creatives (e.g. Top 5 videos) for brand review. Selection criteria may include quality, hook rate, creativity, compliance, engagement potential and brand fit. Selection decisions are final.
+              </div>
+              <div>
+                <strong>6. Content Distribution Rights:</strong> Creators acknowledge that selected campaign creatives may be distributed across participating creators for campaign execution. No creator shall claim exclusive ownership over campaign execution rights after approval.
+              </div>
+              <div>
+                <strong>7. Creator Identity Confidentiality:</strong> CreatoKite may withhold your identity from brands during internal content selection. Brands may receive campaign results without disclosure of selected creator identities.
+              </div>
+              <div>
+                <strong>8. Earnings Policy:</strong> Campaign earnings depend on participation, deliverable completion, compliance and campaign rules. CreatoKite does not guarantee fixed income.
+              </div>
+              <div>
+                <strong>9. Prohibited Actions:</strong> Do not leak campaign information or contact brands directly. Do not reveal internal workflows or manipulate analytics. Do not submit copied content, use bots, or re-upload restricted assets.
+              </div>
+              <div>
+                <strong>10. Intellectual Property:</strong> Original content ownership remains with the creator unless campaign licensing applies. Creators grant CreatoKite limited campaign usage rights upon submission.
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <strong>1. Campaign Package Model:</strong> Brands purchase creator participation packages (e.g. 20 / 40 / 50 creators). Package selection determines your campaign pool size.
+              </div>
+              <div>
+                <strong>2. Participation-Based Delivery:</strong> Campaigns operate through participation pools and not fixed creator assignments. Creator availability may vary per campaign cycle.
+              </div>
+              <div>
+                <strong>3. Confidential Workflow:</strong> Creator identities may remain confidential during campaign processing. CreatoKite does not disclose creator personal information without consent.
+              </div>
+              <div>
+                <strong>4. Content Selection Model:</strong> Multiple creators may submit content. CreatoKite audits and shortlists creatives before presentation to the brand. You will receive only reviewed, shortlisted content.
+              </div>
+              <div>
+                <strong>5. Performance Disclaimer:</strong> CreatoKite provides no guarantee of sales, ROI, reach, virality or engagement outcomes. Campaign performance depends on multiple external factors.
+              </div>
+              <div>
+                <strong>6. Approval Rights:</strong> Brands may approve or reject shortlisted creatives presented for their campaign. Approved assets may be distributed within the campaign creator network.
+              </div>
+              <div>
+                <strong>7. Payment Terms:</strong> Campaigns will only go live after full payment confirmation. Refunds are subject to CreatoKite's refund policy.
+              </div>
+              <div>
+                <strong>8. Content Usage:</strong> Approved creative assets may be distributed within the campaign creator network solely for campaign execution purposes.
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div style={{ padding: '14px 24px', borderTop: '1px solid #ECE7DE', background: '#FAF8F5', textAlign: 'right' }}>
+          <button
+            type="button" onClick={onClose}
+            style={{
+              padding: '8px 20px', background: '#E65F2B', color: '#FFF', border: 'none',
+              borderRadius: 10, fontWeight: 700, fontSize: 13, cursor: 'pointer'
+            }}
+          >
+            I Understand &amp; Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
    OtpModal — 6-digit OTP Email Verification Dialog
  ───────────────────────────────────────────────────────────── */
 function OtpModal({ email, onVerified, onClose }) {
@@ -202,122 +357,7 @@ function OtpModal({ email, onVerified, onClose }) {
 }
 
 
-/* ─────────────────────────────────────────────────────────────
-   TermsModal — shows Creator or Brand T&C based on role prop
- ───────────────────────────────────────────────────────────── */
-function TermsModal({ role, onClose }) {
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
-      background: 'rgba(15, 14, 12, 0.75)',
-      backdropFilter: 'blur(10px)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: 20,
-    }}>
-      <div style={{
-        background: '#FFFFFF',
-        border: '1px solid #ECE7DE',
-        borderRadius: 24,
-        width: '100%', maxWidth: 560,
-        maxHeight: '85vh', display: 'flex', flexDirection: 'column',
-        overflow: 'hidden',
-        boxShadow: '0 24px 60px rgba(0,0,0,0.25)',
-        fontFamily: 'Inter, sans-serif',
-      }}>
-        {/* Header */}
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '20px 24px', borderBottom: '1px solid #ECE7DE', flexShrink: 0,
-        }}>
-          <div>
-            <h2 style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 18, margin: 0, color: '#1F1C18' }}>
-              {role === 'brand' ? '🏢 Brand Terms & Conditions' : '✨ Creator Terms & Conditions'}
-            </h2>
-            <p style={{ fontSize: 12, color: '#6E6B65', margin: '4px 0 0' }}>
-              Please read carefully before registering on CreatoKite
-            </p>
-          </div>
-          <button onClick={onClose} style={{
-            background: '#F4F1E9', border: 'none', cursor: 'pointer',
-            color: '#6E6B65', width: 32, height: 32, borderRadius: 50,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s',
-          }}>
-            <X size={16} />
-          </button>
-        </div>
 
-        {/* Scrollable Body */}
-        <div style={{ overflowY: 'auto', padding: '22px 24px', flex: 1, fontSize: 13, color: '#4A463F', lineHeight: 1.75 }}>
-          <p style={{ color: '#E65F2B', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 18 }}>
-            Effective immediately upon registration · CreatoKite Technologies
-          </p>
-
-          {role === 'creator' && (<>
-            <TC title="1. Platform Role">
-              CreatoKite acts as a campaign coordination and creator participation platform connecting brands and creators for collaborative influencer campaigns. CreatoKite does not guarantee campaign allocation or fixed earnings.
-            </TC>
-
-            <TC title="2. Creator Participation Model">
-              <ul style={{ paddingLeft: 18, margin: '6px 0', lineHeight: 2 }}>
-                <li>Creators shall not be permanently assigned or exclusively mapped to any individual brand.</li>
-                <li>Campaign opportunities are released on creator dashboards based on platform campaigns.</li>
-                <li>Creators may voluntarily accept or reject campaigns.</li>
-              </ul>
-            </TC>
-
-            <TC title="3. Content Submission & Audit Rights">
-              Upon campaign acceptance you may submit content assets. CreatoKite reserves the right to review, audit, reject, edit, shortlist and optimize content.
-            </TC>
-
-            <TC title="4. Prohibited Actions">
-              <ul style={{ paddingLeft: 18, margin: '6px 0', lineHeight: 2 }}>
-                <li>Do not leak campaign information or contact brands directly.</li>
-                <li>Do not submit copied content or use artificial engagement bots.</li>
-              </ul>
-            </TC>
-          </>)}
-
-          {role === 'brand' && (<>
-            <TC title="1. Campaign Package Model">
-              Brands purchase creator participation packages. Package selection determines your campaign pool size.
-            </TC>
-
-            <TC title="2. Content Selection Model">
-              Multiple creators may submit content. CreatoKite audits and shortlists creatives before presentation to the brand.
-            </TC>
-
-            <TC title="3. Payment Terms">
-              Campaigns will go live after payment confirmation.
-            </TC>
-          </>)}
-
-          <p style={{
-            marginTop: 20, padding: '12px 14px',
-            background: 'rgba(230, 95, 43, 0.06)',
-            border: '1px solid rgba(230, 95, 43, 0.18)',
-            borderRadius: 10, fontSize: 12, color: '#E65F2B',
-          }}>
-            📩 Questions? Contact us at <strong>creaotokite123@gmail.com</strong>
-          </p>
-        </div>
-
-        {/* Footer */}
-        <div style={{
-          padding: '16px 24px', borderTop: '1px solid #ECE7DE',
-          flexShrink: 0, display: 'flex', justifyContent: 'flex-end',
-        }}>
-          <button onClick={onClose} style={{
-            padding: '10px 18px', background: '#E65F2B', color: '#FFF',
-            border: 'none', borderRadius: 10, fontWeight: 700, fontSize: 13, cursor: 'pointer',
-            display: 'flex', alignItems: 'center', gap: 6,
-          }}>
-            <CheckCircle2 size={16} /> I've Read the Terms
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function TC({ title, children }) {
   return (
@@ -976,6 +1016,9 @@ export default function Register() {
 
 
 
+        {/* Terms Modal */}
+        {showTerms && <TermsModal onClose={() => setShowTerms(false)} role={form.role} />}
+
         {/* Background Ambient Glow Circle at Bottom Right */}
         <div className="reg-bg-glow-circle" />
       </div>
@@ -1412,6 +1455,16 @@ export default function Register() {
           font-size: 12px;
           color: #555047;
           line-height: 1.45;
+        }
+
+        .reg-terms-link {
+          color: #E65F2B;
+          cursor: pointer;
+          text-decoration: underline;
+        }
+
+        .reg-terms-link:hover {
+          color: #D14D1A;
         }
 
         .login-custom-checkbox {

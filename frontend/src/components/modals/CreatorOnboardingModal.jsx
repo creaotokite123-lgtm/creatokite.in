@@ -1,15 +1,29 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import { usersAPI } from '../../api';
 import toast from 'react-hot-toast';
-import { Sparkles, MapPin, Instagram, Eye, DollarSign, Camera, Video, Languages, CheckCircle2, ChevronRight, ChevronLeft, X, Lock } from 'lucide-react';
+import { Sparkles, MapPin, Instagram, Eye, DollarSign, Camera, Video, Languages, CheckCircle2, ChevronRight, ChevronLeft, X, Lock, Home, AlertTriangle } from 'lucide-react';
 
 const NICHES = ['Tech', 'Beauty', 'Fashion', 'Fitness', 'Food', 'Travel', 'Gaming', 'Education', 'Finance', 'Lifestyle'];
 const LANGUAGE_OPTIONS = ['English', 'Hindi', 'Hinglish', 'Tamil', 'Telugu', 'Kannada', 'Marathi', 'Bengali', 'Gujarati', 'Punjabi'];
 
 export default function CreatorOnboardingModal({ user, onComplete }) {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
+
+  const handleExitToHome = async () => {
+    try {
+      if (logout) await logout();
+    } catch (err) {
+      console.error(err);
+    }
+    window.location.href = '/';
+  };
 
   const [nicheQuery, setNicheQuery] = useState('');
 
@@ -123,22 +137,101 @@ export default function CreatorOnboardingModal({ user, onComplete }) {
         }}
       >
         {/* Top Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-          <div style={{
-            width: 44, height: 44, borderRadius: 14, background: 'rgba(230,95,43,0.12)',
-            color: 'var(--acc)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
-          }}>
-            <Sparkles size={22} />
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{
+              width: 44, height: 44, borderRadius: 14, background: 'rgba(230,95,43,0.12)',
+              color: 'var(--acc)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+            }}>
+              <Sparkles size={22} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: 20, fontWeight: 900, color: 'var(--t1)', margin: 0, letterSpacing: '-0.02em' }}>
+                Creator Verification & Onboarding
+              </h3>
+              <p style={{ fontSize: 12.5, color: 'var(--t3)', margin: 0, fontWeight: 500 }}>
+                Step {step} of 3 — All fields required. (You can update rates & location anytime in Settings)
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 style={{ fontSize: 20, fontWeight: 900, color: 'var(--t1)', margin: 0, letterSpacing: '-0.02em' }}>
-              Creator Verification & Onboarding
-            </h3>
-            <p style={{ fontSize: 12.5, color: 'var(--t3)', margin: 0, fontWeight: 500 }}>
-              Step {step} of 3 — All fields required. (You can update rates & location anytime in Settings)
-            </p>
-          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowExitConfirm(true)}
+            title="Cancel & Go back to Home page"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              background: 'rgba(230,95,43,0.08)', border: '1px solid rgba(230,95,43,0.2)',
+              borderRadius: 10, padding: '7px 12px', color: 'var(--acc, #E65F2B)', fontSize: 12.5,
+              fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s ease', flexShrink: 0,
+              whiteSpace: 'nowrap'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(230,95,43,0.18)'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(230,95,43,0.08)'; }}
+          >
+            <Home size={14} />
+            Back to Home
+          </button>
         </div>
+
+        {/* Exit Confirmation Warning Modal */}
+        {showExitConfirm && (
+          <div style={{
+            position: 'fixed', inset: 0, zIndex: 1000000,
+            background: 'rgba(0, 0, 0, 0.78)', backdropFilter: 'blur(10px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20
+          }}>
+            <div style={{
+              width: '100%', maxWidth: 440, background: 'var(--s1, #1C1917)',
+              border: '1px solid rgba(230, 95, 43, 0.3)', borderRadius: 20,
+              padding: '28px 26px', boxShadow: '0 24px 70px rgba(0,0,0,0.6)',
+              textAlign: 'center', fontFamily: 'Inter, sans-serif'
+            }}>
+              <div style={{
+                width: 52, height: 52, borderRadius: 16, background: 'rgba(239, 68, 68, 0.15)',
+                color: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                margin: '0 auto 16px'
+              }}>
+                <AlertTriangle size={26} />
+              </div>
+
+              <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--t1)', margin: '0 0 8px' }}>
+                Exit Onboarding & Log Out?
+              </h3>
+
+              <p style={{ fontSize: 13, color: 'var(--t3)', margin: '0 0 24px', lineHeight: 1.5 }}>
+                Going back to Home will log you out and discard your unsaved onboarding progress. You will need to sign in again to complete your profile.
+              </p>
+
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowExitConfirm(false)}
+                  style={{
+                    flex: 1, padding: '11px 16px', background: 'var(--s2)',
+                    border: '1px solid var(--border)', borderRadius: 10,
+                    fontSize: 13, fontWeight: 700, color: 'var(--t1)', cursor: 'pointer'
+                  }}
+                >
+                  Stay & Complete Profile
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleExitToHome}
+                  style={{
+                    flex: 1, padding: '11px 16px', background: '#EF4444',
+                    border: 'none', borderRadius: 10,
+                    fontSize: 13, fontWeight: 800, color: '#FFF', cursor: 'pointer',
+                    boxShadow: '0 4px 14px rgba(239, 68, 68, 0.35)'
+                  }}
+                >
+                  Exit & Log Out
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Progress Bar */}
         <div style={{ height: 4, background: 'rgba(74,62,61,0.08)', borderRadius: 99, marginBottom: 24, overflow: 'hidden' }}>
@@ -481,7 +574,14 @@ export default function CreatorOnboardingModal({ user, onComplete }) {
             >
               <ChevronLeft size={16} /> Back
             </button>
-          ) : <div />}
+          ) : (
+            <button
+              type="button" onClick={() => setShowExitConfirm(true)}
+              style={{ padding: '10px 18px', background: 'var(--s2)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 13, fontWeight: 700, color: 'var(--t2)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              <Home size={16} /> Back to Home
+            </button>
+          )}
 
           {step < 3 ? (
             <button

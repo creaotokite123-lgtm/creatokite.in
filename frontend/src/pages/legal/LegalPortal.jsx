@@ -396,7 +396,6 @@ export default function LegalPortal({ defaultTab = 'privacy' }) {
                 <div style={{ background: '#FAF7F2', padding: 20, borderRadius: 16, border: '1px solid rgba(17,24,39,0.08)' }}>
                   <div><strong>CreatoKite Data Protection Office</strong></div>
                   <div style={{ marginTop: 4 }}>Email: <a href="mailto:creaotokite123@gmail.com" style={{ color: '#E55B2B', fontWeight: 700 }}>creaotokite123@gmail.com</a> / <a href="mailto:privacy@creatokite.in" style={{ color: '#E55B2B', fontWeight: 700 }}>privacy@creatokite.in</a></div>
-                  <div style={{ marginTop: 2 }}>Headquarters: CreatoKite Technologies, Bengaluru, Karnataka, India</div>
                 </div>
               </div>
             </div>
@@ -504,69 +503,159 @@ export default function LegalPortal({ defaultTab = 'privacy' }) {
              ════════════════════════════════════════════════ */}
           {activeTab === 'terms' && (
             <div>
-              <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 24, marginBottom: 30 }}>
-                <h2 style={{ fontSize: 24, fontWeight: 900, color: '#111827', margin: '0 0 10px' }}>
-                  1. Acceptance of Terms
-                </h2>
-                <p>
-                  By creating an account, browsing opportunities, or launching campaigns on <strong>CreatoKite</strong>, you agree to be bound by these Terms of Service, our Privacy Policy, and our Community Guidelines. If you do not agree to these terms, please do not use the CreatoKite platform.
+              <div style={{ background: '#FFF8F4', border: '1px solid rgba(229, 91, 43, 0.2)', borderRadius: 14, padding: 18, marginBottom: 28 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 800, color: '#E55B2B', margin: '0 0 6px' }}>
+                  Please read carefully before registering on CreatoKite
+                </h3>
+                <p style={{ fontSize: 13, color: '#4B5563', margin: 0, fontWeight: 500 }}>
+                  Effective immediately upon registration · CreatoKite Technologies
                 </p>
               </div>
 
-              <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 24, marginBottom: 30 }}>
-                <h2 style={{ fontSize: 22, fontWeight: 900, color: '#111827', margin: '0 0 12px' }}>
-                  2. Creator Obligations &amp; Authenticity Standards
-                </h2>
-                <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <li>
-                    <strong>Authentic Engagement:</strong> Creators must represent accurate metrics. The use of bots, fake followers, click farms, or engagement pods is strictly prohibited and results in immediate account termination.
-                  </li>
-                  <li>
-                    <strong>Deliverable Quality &amp; Deadlines:</strong> When assigned to a campaign brief, creators must deliver drafts within the stipulated timeframe and adhere to brand creative guidelines submitted in the Campaign Room.
-                  </li>
-                  <li>
-                    <strong>Advertising Disclosures (ASCI &amp; FTC):</strong> In compliance with the Advertising Standards Council of India (ASCI) guidelines, creators must clearly disclose sponsored content using appropriate tags such as #Ad, #Sponsored, or #Partnership.
-                  </li>
-                </ul>
+              {/* Creator Terms Section */}
+              <div style={{ marginBottom: 36 }}>
+                <div style={{ display: 'inline-block', background: 'rgba(229, 91, 43, 0.1)', color: '#E55B2B', padding: '4px 12px', borderRadius: 8, fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16 }}>
+                  Creator Terms &amp; Participation Policy
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>1. Platform Role</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      CreatoKite acts as a campaign coordination and creator participation platform connecting brands and creators for collaborative influencer campaigns. CreatoKite does not guarantee campaign allocation, fixed earnings, brand selection, or creator visibility in every campaign. Participation remains opportunity-based.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>2. Creator Participation Model</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      Creators shall not be permanently assigned or exclusively mapped to any individual brand. Campaign opportunities are released on creator dashboards based on platform campaigns. Creators may voluntarily accept or reject campaigns. Acceptance does not guarantee final content selection or publishing rights.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>3. Campaign Acceptance</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      Each campaign on your dashboard will contain: campaign duration, submission deadline, content requirements, platform rules, compensation model, and deliverables. Failure to respond within the campaign window may result in automatic expiration.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>4. Content Submission &amp; Audit Rights</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      Upon campaign acceptance you may submit content assets. CreatoKite reserves the right to review, audit, reject, edit, shortlist and optimise content. Submission does not guarantee selection.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>5. Internal Selection Mechanism</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      CreatoKite may internally shortlist top-performing creatives (e.g. Top 5 videos) for brand review. Selection criteria may include quality, hook rate, creativity, compliance, engagement potential and brand fit. Selection decisions are final.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>6. Content Distribution Rights</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      Creators acknowledge that selected campaign creatives may be distributed across participating creators for campaign execution. No creator shall claim exclusive ownership over campaign execution rights after approval.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>7. Creator Identity Confidentiality</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      CreatoKite may withhold your identity from brands during internal content selection. Brands may receive campaign results without disclosure of selected creator identities.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>8. Earnings Policy</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      Campaign earnings depend on participation, deliverable completion, compliance and campaign rules. CreatoKite does not guarantee fixed income.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>9. Prohibited Actions</h3>
+                    <ul style={{ paddingLeft: 20, margin: 0, fontSize: 14, color: '#4B5563', lineHeight: 1.6, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <li>Do not leak campaign information or contact brands directly.</li>
+                      <li>Do not reveal internal workflows or manipulate analytics.</li>
+                      <li>Do not submit copied content, use bots, or re-upload restricted assets.</li>
+                    </ul>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>10. Intellectual Property</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      Original content ownership remains with the creator unless campaign licensing applies. Creators grant CreatoKite limited campaign usage rights upon submission.
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 24, marginBottom: 30 }}>
-                <h2 style={{ fontSize: 22, fontWeight: 900, color: '#111827', margin: '0 0 12px' }}>
-                  3. Brand Obligations &amp; Campaign Commitments
-                </h2>
-                <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <li>
-                    <strong>Brief Accuracy:</strong> Brands must provide truthful, lawful campaign deliverables, product guidelines, and transparent compensation terms.
-                  </li>
-                  <li>
-                    <strong>Campaign Budget Commitment:</strong> Campaign budgets and payment allocations must be confirmed prior to creator assignment to ensure guaranteed compensation for approved deliverables.
-                  </li>
-                  <li>
-                    <strong>Timely Review:</strong> Brands must review submitted creator drafts within 72 business hours. If no revisions or rejections are submitted within the window, deliverables may be auto-approved by Admin.
-                  </li>
-                </ul>
-              </div>
-
-              <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 24, marginBottom: 30 }}>
-                <h2 style={{ fontSize: 22, fontWeight: 900, color: '#111827', margin: '0 0 12px' }}>
-                  4. Intellectual Property &amp; UGC Usage Rights
-                </h2>
-                <p>
-                  Unless custom terms are agreed upon in the Campaign Room:
-                </p>
-                <ul style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <li>Creators retain moral authorship of their original video and image content.</li>
-                  <li>Upon approval and payout release, the Brand receives a non-exclusive, worldwide commercial license to utilize, promote, and run paid ad whitelisting on the approved UGC content for the duration agreed in the brief.</li>
-                </ul>
-              </div>
-
+              {/* Brand Terms Section */}
               <div>
-                <h2 style={{ fontSize: 22, fontWeight: 900, color: '#111827', margin: '0 0 12px' }}>
-                  5. Dispute Resolution &amp; Admin Mediation
-                </h2>
-                <p>
-                  In the event of a deliverable dispute between a brand and creator, CreatoKite's dispute mediation team will review the original brief, draft submissions, and revision notes to issue an impartial, final resolution for payout approval.
-                </p>
+                <div style={{ display: 'inline-block', background: 'rgba(17, 24, 39, 0.08)', color: '#111827', padding: '4px 12px', borderRadius: 8, fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16 }}>
+                  Brand Terms &amp; Package Policy
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>1. Campaign Package Model</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      Brands purchase creator participation packages (e.g. 20 / 40 / 50 creators). Package selection determines your campaign pool size.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>2. Participation-Based Delivery</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      Campaigns operate through participation pools and not fixed creator assignments. Creator availability may vary per campaign cycle.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>3. Content Selection Model</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      Multiple creators may submit content. CreatoKite audits and shortlists creatives before presentation to the brand. You will receive only reviewed, shortlisted content.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>4. Confidential Workflow</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      Creator identities may remain confidential during campaign processing. CreatoKite does not disclose creator personal information without consent.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>5. Performance Disclaimer</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      CreatoKite provides no guarantee of sales, ROI, reach, virality or engagement outcomes. Campaign performance depends on multiple external factors.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>6. Approval Rights</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      Brands may approve or reject shortlisted creatives presented for their campaign. Approved assets may be distributed within the campaign creator network.
+                    </p>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid rgba(17, 24, 39, 0.08)', paddingBottom: 16 }}>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>7. Payment Terms</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      Campaigns will only go live after full payment confirmation. Refunds are subject to CreatoKite's refund policy.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#111827', margin: '0 0 6px' }}>8. Content Usage</h3>
+                    <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.6 }}>
+                      Approved creative assets may be distributed within the campaign creator network solely for campaign execution purposes.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           )}

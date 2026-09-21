@@ -620,12 +620,13 @@ router.get(
 
 router.get(
   "/google/callback",
-
-  passport.authenticate("google", {
-    failureRedirect: "/login",
-    session: false,
-  }),
-
+  (req, res, next) => {
+    const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/+$/, '');
+    passport.authenticate("google", {
+      failureRedirect: `${clientUrl}/login`,
+      session: false,
+    })(req, res, next);
+  },
   async (req, res) => {
     try {
 
