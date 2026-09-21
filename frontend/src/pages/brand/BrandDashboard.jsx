@@ -90,6 +90,7 @@ export default function BrandDashboard() {
     day: 'numeric'
   });
   const currentHour = new Date().getHours();
+  const greeting = currentHour < 12 ? 'Good morning' : currentHour < 18 ? 'Good afternoon' : 'Good evening';
   const STATUS_OPTIONS = [
     { key: 'all', label: 'All Statuses', count: campaigns.length },
     { key: 'brand_submitted', label: 'Pending', count: campaigns.filter(c => ['brand_submitted', 'admin_review', 'ai_analyzing'].includes(c.workflowStatus || c.status)).length },

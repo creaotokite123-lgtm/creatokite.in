@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth, getDashboardPath } from '../contexts/AuthContext';
 import FAQ from "../components/FAQ";
 import SEO from '../components/common/SEO';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowRight, Search } from 'lucide-react';
 import api from '../api';
 
 
@@ -430,16 +430,11 @@ export default function Landing() {
               <button className="cta-primary" onClick={() => nav('/register?role=brand')}>
                 Launch a Campaign <span className="btn-arrow">→</span>
               </button>
-              <button className="cta-secondary" onClick={() => {
-                const el = document.getElementById('how-it-works');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}>
-                <span className="play-icon-circle">
-                  <svg width="10" height="12" viewBox="0 0 10 12" fill="none">
-                    <path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="#1F2937" />
-                  </svg>
+              <button className="cta-secondary" onClick={() => nav('/register?role=creator')}>
+                <span className="search-icon-circle">
+                  <Search size={14} color="#1F2937" strokeWidth={2.2} />
                 </span>
-                Watch How It Works
+                Find Campaign
               </button>
             </div>
 
@@ -1720,6 +1715,7 @@ export default function Landing() {
           transform: translateY(-1px);
         }
 
+        .search-icon-circle,
         .play-icon-circle {
           width: 24px;
           height: 24px;
@@ -1728,7 +1724,6 @@ export default function Landing() {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding-left: 2px;
         }
 
         /* Social Proof Footer */

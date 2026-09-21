@@ -140,7 +140,7 @@ export default function App() {
 
       <Routes>
       {/* ── Public ──────────────────────────────────── */}
-      <Route path="/"              element={<StartupAnimation><Landing /></StartupAnimation>} />
+      <Route path="/"              element={<GuestRoute><StartupAnimation><Landing /></StartupAnimation></GuestRoute>} />
       <Route path="/login"         element={<GuestRoute><Login /></GuestRoute>} />
       <Route path="/register"      element={<GuestRoute><Register /></GuestRoute>} />
       <Route path="/login-success" element={<LoginSuccess />} />
