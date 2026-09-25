@@ -630,529 +630,529 @@ export default function Landing() {
 
       {/* ── MAIN CONTENT WRAPPER ───────────────────────────── */}
       <main id="main-content">
-      {/* ── MARQUEE DIVIDER 1 ───────────────────────────────── */}
-      <div className="marquee">
-        <div className="marquee-track">
-          <span>CREATE <KiteIcon /> COLLABORATE <KiteIcon /> INSPIRE <KiteIcon /> BUILD <KiteIcon /> CREATE <KiteIcon /> COLLABORATE <KiteIcon /> INSPIRE <KiteIcon /> BUILD <KiteIcon /> CREATE <KiteIcon /> COLLABORATE <KiteIcon /> INSPIRE <KiteIcon /> BUILD <KiteIcon /></span>
-          <span>CREATE <KiteIcon /> COLLABORATE <KiteIcon /> INSPIRE <KiteIcon /> BUILD <KiteIcon /> CREATE <KiteIcon /> COLLABORATE <KiteIcon /> INSPIRE <KiteIcon /> BUILD <KiteIcon /> CREATE <KiteIcon /> COLLABORATE <KiteIcon /> INSPIRE <KiteIcon /> BUILD <KiteIcon /></span>
-        </div>
-      </div>
-
-      {/* ── STATEMENT SECTION ───────────────────────────────── */}
-      <section className="statement" id="about">
-        <div className="wrap reveal">
-          <div className="small">The idea</div>
-          <h2>Creativity deserves <em>better</em> collaborations.</h2>
-        </div>
-      </section>
-
-      {/* ── PROCESS SECTION ─────────────────────────────────── */}
-      <section className="process" id="how-it-works">
-        <div className="wrap">
-          <div className="section-top reveal">
-            <h2>How it<br />works.</h2>
-            <p>No complicated layers. Find the right people, make something good, and let the work speak for itself.</p>
+        {/* ── MARQUEE DIVIDER 1 ───────────────────────────────── */}
+        <div className="marquee">
+          <div className="marquee-track">
+            <span>CREATE <KiteIcon /> COLLABORATE <KiteIcon /> INSPIRE <KiteIcon /> BUILD <KiteIcon /> CREATE <KiteIcon /> COLLABORATE <KiteIcon /> INSPIRE <KiteIcon /> BUILD <KiteIcon /> CREATE <KiteIcon /> COLLABORATE <KiteIcon /> INSPIRE <KiteIcon /> BUILD <KiteIcon /></span>
+            <span>CREATE <KiteIcon /> COLLABORATE <KiteIcon /> INSPIRE <KiteIcon /> BUILD <KiteIcon /> CREATE <KiteIcon /> COLLABORATE <KiteIcon /> INSPIRE <KiteIcon /> BUILD <KiteIcon /> CREATE <KiteIcon /> COLLABORATE <KiteIcon /> INSPIRE <KiteIcon /> BUILD <KiteIcon /></span>
           </div>
-          <div className="steps">
-            {FLOW.map((step) => (
-              <div key={step.n} className="step reveal">
-                <div className="num">{step.n}</div>
-                <h3>{step.t}</h3>
-                <p>{step.d}</p>
+        </div>
+
+        {/* ── STATEMENT SECTION ───────────────────────────────── */}
+        <section className="statement" id="about">
+          <div className="wrap reveal">
+            <div className="small">The idea</div>
+            <h2>Creativity deserves <em>better</em> collaborations.</h2>
+          </div>
+        </section>
+
+        {/* ── PROCESS SECTION ─────────────────────────────────── */}
+        <section className="process" id="how-it-works">
+          <div className="wrap">
+            <div className="section-top reveal">
+              <h2>How it<br />works.</h2>
+              <p>No complicated layers. Find the right people, make something good, and let the work speak for itself.</p>
+            </div>
+            <div className="steps">
+              {FLOW.map((step) => (
+                <div key={step.n} className="step reveal">
+                  <div className="num">{step.n}</div>
+                  <h3>{step.t}</h3>
+                  <p>{step.d}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── CONTRAST SPLIT PANELS ────────────────────────────── */}
+        <div className="split">
+          <div className="panel creator" id="creator-split">
+            <div className="label">For creators</div>
+            <div>
+              <h2>Your creativity<br />is your <em>currency.</em></h2>
+              <p>Discover relevant campaigns, showcase your creative identity and build relationships with brands that get what you do.</p>
+            </div>
+            <a className="under" href="#" onClick={(e) => { e.preventDefault(); nav('/register?role=creator'); }}>Join as a Creator ↗</a>
+          </div>
+          <div className="panel brand" id="brand-split">
+            <div className="label">For brands</div>
+            <div>
+              <h2>Find the people who make your <em>brand matter.</em></h2>
+              <p>Discover creative talent, launch campaigns and build authentic work with creators your audience already trusts.</p>
+            </div>
+            <a className="under" href="#" onClick={(e) => { e.preventDefault(); nav('/register?role=brand'); }}>Create a Campaign ↗</a>
+          </div>
+        </div>
+
+        {/* ── CAMPAIGNS SECTION (REDESIGNED EXPLICITLY TO MATCH REFERENCE) ── */}
+        <section className="campaigns-spotlight-section" id="campaigns">
+          <div className="wrap">
+            {/* Header Row */}
+            <div className="spotlight-header reveal">
+              <div className="spotlight-header-left">
+                <span className="spotlight-badge">
+                  <span className="badge-dot">●</span> CAMPAIGN SPOTLIGHT
+                </span>
+                <h2 className="spotlight-title">
+                  Campaigns<br />
+                  worth <em>making.</em>
+                </h2>
+                <p className="spotlight-sub">
+                  Discover and collaborate on creative briefs across fashion, lifestyle, technology and more.
+                </p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* ── CONTRAST SPLIT PANELS ────────────────────────────── */}
-      <div className="split">
-        <div className="panel creator" id="creator-split">
-          <div className="label">For creators</div>
-          <div>
-            <h2>Your creativity<br />is your <em>currency.</em></h2>
-            <p>Discover relevant campaigns, showcase your creative identity and build relationships with brands that get what you do.</p>
-          </div>
-          <a className="under" href="#" onClick={(e) => { e.preventDefault(); nav('/register?role=creator'); }}>Join as a Creator ↗</a>
-        </div>
-        <div className="panel brand" id="brand-split">
-          <div className="label">For brands</div>
-          <div>
-            <h2>Find the people who make your <em>brand matter.</em></h2>
-            <p>Discover creative talent, launch campaigns and build authentic work with creators your audience already trusts.</p>
-          </div>
-          <a className="under" href="#" onClick={(e) => { e.preventDefault(); nav('/register?role=brand'); }}>Create a Campaign ↗</a>
-        </div>
-      </div>
+              <div className="spotlight-header-right">
+                <div className="spark-circle-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z" fill="#E55B2B" />
+                  </svg>
+                </div>
+                <div className="spark-text">
+                  Real briefs. Real creators.<br />Real impact.
+                </div>
+              </div>
+            </div>
 
-      {/* ── CAMPAIGNS SECTION (REDESIGNED EXPLICITLY TO MATCH REFERENCE) ── */}
-      <section className="campaigns-spotlight-section" id="campaigns">
-        <div className="wrap">
-          {/* Header Row */}
-          <div className="spotlight-header reveal">
-            <div className="spotlight-header-left">
-              <span className="spotlight-badge">
-                <span className="badge-dot">●</span> CAMPAIGN SPOTLIGHT
-              </span>
-              <h2 className="spotlight-title">
-                Campaigns<br />
-                worth <em>making.</em>
+            {/* Cards Grid Split Layout */}
+            <div className="spotlight-cards-grid">
+
+              {/* Left Tall Card: FASHION */}
+              <div className="spotlight-card card-fashion reveal">
+                <div className="card-top-tag">
+                  <span className="pill-tag tag-fashion">FASHION • OPEN</span>
+                </div>
+
+                {/* Inner White Creator Match Card */}
+                <div className="fashion-inner-card">
+                  <div className="match-row">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80" alt="CreatoKite fashion creator Ananya Sharma" width="40" height="40" className="match-avatar" />
+                    <div className="match-info">
+                      <div className="match-name">Ananya Sharma</div>
+                      <div className="match-niche">Fashion & Styling</div>
+                    </div>
+                    <span className="match-score-pill">95% Match</span>
+                  </div>
+
+                  <div className="match-row">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80" alt="CreatoKite creative director Kabir Mehta" width="40" height="40" className="match-avatar" />
+                    <div className="match-info">
+                      <div className="match-name">Kabir Mehta</div>
+                      <div className="match-niche">Creative Direction</div>
+                    </div>
+                    <span className="match-score-pill">93% Match</span>
+                  </div>
+
+                  <div className="match-row">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80" alt="CreatoKite editorial photographer Riya Sen" width="40" height="40" className="match-avatar" />
+                    <div className="match-info">
+                      <div className="match-name">Riya Sen</div>
+                      <div className="match-niche">Editorial Photography</div>
+                    </div>
+                    <span className="match-score-pill">91% Match</span>
+                  </div>
+                </div>
+
+                {/* Bottom Content & Graphic */}
+                <div className="fashion-card-bottom">
+                  <div className="fashion-bottom-left">
+                    <div className="action-circle-btn" onClick={() => nav('/register?role=creator')}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                        <polyline points="7 7 17 7 17 17"></polyline>
+                      </svg>
+                    </div>
+                    <h3 className="card-heading">Rework the everyday.</h3>
+                    <p className="card-studio-sub">North Studio • 12 creators</p>
+                  </div>
+
+                  <div className="fashion-bottom-graphic">
+                    <img src="/assets/campaign_arch_3d.jpg" alt="CreatoKite fashion campaign brief creative visual" loading="lazy" className="arch-graphic-img" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column Stack (Lifestyle + Technology) */}
+              <div className="spotlight-right-column">
+
+                {/* Top-Right Card: LIFESTYLE */}
+                <div className="spotlight-card card-lifestyle reveal">
+                  <div className="lifestyle-top-row">
+                    <span className="pill-tag tag-lifestyle">LIFESTYLE • NEW</span>
+
+                    {/* Engagement Bar inside */}
+                    <div className="lifestyle-bar-wrapper">
+                      <div className="bar-track">
+                        <div className="bar-fill" style={{ width: '82%' }}></div>
+                      </div>
+                      <div className="bar-text-row">
+                        <span>Engagement</span>
+                        <strong>82%</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="lifestyle-main-content">
+                    <div className="content-text-left">
+                      <div className="icon-circle sun-icon-bg">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E55B2B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="5"></circle>
+                          <line x1="12" y1="1" x2="12" y2="3"></line>
+                          <line x1="12" y1="21" x2="12" y2="23"></line>
+                          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                          <line x1="1" y1="12" x2="3" y2="12"></line>
+                          <line x1="21" y1="12" x2="23" y2="12"></line>
+                          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                      </div>
+                      <h3 className="card-heading">Slow mornings.</h3>
+                      <p className="card-studio-sub">Good Ground • 8 creators</p>
+                    </div>
+
+                    <div className="lifestyle-graphic-right">
+                      <img src="/assets/campaign_lifestyle_mug.jpg" alt="CreatoKite lifestyle mug product collaboration" loading="lazy" className="mug-graphic-img" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom-Right Card: TECHNOLOGY */}
+                <div className="spotlight-card card-technology reveal">
+                  <div className="tech-top-row">
+                    <span className="pill-tag tag-tech">TECHNOLOGY • OPEN</span>
+
+                    {/* Filter tags */}
+                    <div className="tech-tag-filters">
+                      <span className="filter-pill purple-pill">✦ AI Match</span>
+                      <span className="filter-pill white-pill">Tech</span>
+                      <span className="filter-pill white-pill">Reviews</span>
+                    </div>
+                  </div>
+
+                  <div className="tech-main-content">
+                    <div className="content-text-left">
+                      <div className="icon-circle bolt-icon-bg">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                      </div>
+                      <h3 className="card-heading">Future, in your hands.</h3>
+                      <p className="card-studio-sub">Mono Labs • 15 creators</p>
+                    </div>
+
+                    <div className="tech-graphic-right">
+                      <img src="/assets/campaign_purple_glass.jpg" alt="CreatoKite technology 3D glass product review campaign" loading="lazy" className="glass-graphic-img" />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* ── MARQUEE DIVIDER 2 ───────────────────────────────── */}
+        <div className="marquee">
+          <div className="marquee-track">
+            <span>FASHION <KiteIcon /> BEAUTY <KiteIcon /> TECHNOLOGY <KiteIcon /> LIFESTYLE <KiteIcon /> GAMING <KiteIcon /> FOOD <KiteIcon /> TRAVEL <KiteIcon /> ART <KiteIcon /> FASHION <KiteIcon /> BEAUTY <KiteIcon /> TECHNOLOGY <KiteIcon /> LIFESTYLE <KiteIcon /> GAMING <KiteIcon /> FOOD <KiteIcon /> TRAVEL <KiteIcon /> ART <KiteIcon /></span>
+            <span>FASHION <KiteIcon /> BEAUTY <KiteIcon /> TECHNOLOGY <KiteIcon /> LIFESTYLE <KiteIcon /> GAMING <KiteIcon /> FOOD <KiteIcon /> TRAVEL <KiteIcon /> ART <KiteIcon /> FASHION <KiteIcon /> BEAUTY <KiteIcon /> TECHNOLOGY <KiteIcon /> LIFESTYLE <KiteIcon /> GAMING <KiteIcon /> FOOD <KiteIcon /> TRAVEL <KiteIcon /> ART <KiteIcon /></span>
+          </div>
+        </div>
+
+        {/* ── STATS BLOCK (REDESIGNED CARDS) ───────────────────── */}
+        <section className="stats-section" id="impact-stats">
+          <div className="wrap">
+            <div className="stats-cards-grid reveal">
+
+              {/* Card 1: CREATORS */}
+              <div className="stat-card">
+                <div className="stat-icon-wrapper">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E55B2B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </div>
+
+                <div className="stat-val">{stats.displayCreators}</div>
+                <div className="stat-divider-line"></div>
+
+                <div className="stat-label">CREATORS</div>
+                <p className="stat-sub">Verified creators onboarded</p>
+
+                {/* Bottom Graphic: Soft Wave Curve */}
+                <div className="stat-bg-graphic graphic-wave">
+                  <svg viewBox="0 0 240 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 45 C 50 65 100 25 180 55 C 210 65 230 40 240 30 L 240 70 L 0 70 Z" fill="url(#stat-wave-grad)" />
+                    <path d="M0 45 C 50 65 100 25 180 55 C 210 65 230 40 240 30" stroke="#E55B2B" strokeWidth="1.2" strokeOpacity="0.3" fill="none" />
+                    <defs>
+                      <linearGradient id="stat-wave-grad" x1="0" y1="30" x2="0" y2="70" gradientUnits="userSpaceOnUse">
+                        <stop stopColor="#E55B2B" stopOpacity="0.2" />
+                        <stop offset="1" stopColor="#E55B2B" stopOpacity="0.02" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+              </div>
+
+              {/* Card 2: BRANDS */}
+              <div className="stat-card">
+                <div className="stat-icon-wrapper">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E55B2B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 21h18M3 7v14M21 7v14M6 11h4M6 15h4M14 11h4M14 15h4M9 3l3-2 3 2"></path>
+                  </svg>
+                </div>
+
+                <div className="stat-val">{stats.displayBrands}</div>
+                <div className="stat-divider-line"></div>
+
+                <div className="stat-label">BRANDS</div>
+                <p className="stat-sub">Active brands & agency partners</p>
+
+                {/* Bottom Graphic: Rising Bar Chart Columns */}
+                <div className="stat-bg-graphic graphic-bars">
+                  <div className="bar-col bar-1"></div>
+                  <div className="bar-col bar-2"></div>
+                  <div className="bar-col bar-3"></div>
+                  <div className="bar-col bar-4"></div>
+                  <div className="bar-col bar-5"></div>
+                </div>
+              </div>
+
+              {/* Card 3: CAMPAIGNS */}
+              <div className="stat-card">
+                <div className="stat-icon-wrapper">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E55B2B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                  </svg>
+                </div>
+
+                <div className="stat-val">{stats.displayCampaigns}</div>
+                <div className="stat-divider-line"></div>
+
+                <div className="stat-label">CAMPAIGNS</div>
+                <p className="stat-sub">Successful campaigns launched</p>
+
+                {/* Bottom Graphic: Dual Smooth Sine Lines */}
+                <div className="stat-bg-graphic graphic-lines">
+                  <svg viewBox="0 0 240 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 50 Q 60 10 120 40 T 240 20" stroke="#E55B2B" strokeWidth="1.5" strokeOpacity="0.45" fill="none" />
+                    <path d="M0 35 Q 70 55 140 25 T 240 45" stroke="#E55B2B" strokeWidth="1" strokeOpacity="0.25" fill="none" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Card 4: AVG ROI */}
+              <div className="stat-card">
+                <div className="stat-icon-wrapper">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E55B2B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                  </svg>
+                </div>
+
+                <div className="stat-val">320%</div>
+                <div className="stat-divider-line"></div>
+
+                <div className="stat-label">AVG ROI</div>
+                <p className="stat-sub">Average return on investment</p>
+
+                {/* Bottom Graphic: Growth Exponential Line + Gradient Area */}
+                <div className="stat-bg-graphic graphic-growth">
+                  <svg viewBox="0 0 240 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 0 60 Q 120 55 230 10 L 230 65 L 0 65 Z" fill="url(#roi-growth-grad)" />
+                    <path d="M 0 60 Q 120 55 230 10" stroke="#E55B2B" strokeWidth="2" strokeLinecap="round" fill="none" />
+                    <circle cx="230" cy="10" r="4.5" fill="#E55B2B" />
+                    <circle cx="230" cy="10" r="8" fill="#E55B2B" fillOpacity="0.25" />
+                    <defs>
+                      <linearGradient id="roi-growth-grad" x1="0" y1="10" x2="0" y2="65" gradientUnits="userSpaceOnUse">
+                        <stop stopColor="#E55B2B" stopOpacity="0.2" />
+                        <stop offset="1" stopColor="#E55B2B" stopOpacity="0.02" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* ── TESTIMONIALS SECTION ────────────────────────────── */}
+        <section className="testimonials-section" id="testimonials">
+          <div className="wrap">
+            <div className="eyebrow-container reveal">
+              <span className="eyebrow-line"></span>
+              <span className="eyebrow-text">WHAT PEOPLE SAY</span>
+            </div>
+          </div>
+          <div className="testimonial-marquee-container">
+            {/* Row 1: Sliding Left */}
+            <div className="testimonial-marquee-row left">
+              <div className="testimonial-marquee-track">
+                {TESTIMONIALS.map((t, idx) => (
+                  <div key={`left-1-${idx}`} className={`testimonial-card-v2 ${t.theme}`} style={{ transform: isMobile ? 'none' : `perspective(1000px) rotateY(${(1 - testimonialScrollProgress) * 15}deg) scale(${0.97 + (testimonialScrollProgress * 0.03)})`, transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+                    <div className="testimonial-left-panel">
+                      <div>
+                        <div className="author-name-v2">{t.name}</div>
+                        <blockquote className="testimonial-quote-v2">{t.quote}</blockquote>
+                      </div>
+                      <div className="testimonial-metrics-grid">
+                        <div className="metric-col">
+                          <strong>{t.metricVal1}</strong>
+                          <span>{t.metricLbl1}</span>
+                        </div>
+                        <div className="metric-col">
+                          <strong>{t.metricVal2}</strong>
+                          <span>{t.metricLbl2}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="testimonial-right-panel">
+                      <div className="creator-photo-placeholder" style={{ backgroundColor: t.photoBg }}>
+                        <span className="photo-label">{t.role}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {TESTIMONIALS.map((t, idx) => (
+                  <div key={`left-2-${idx}`} className={`testimonial-card-v2 ${t.theme}`} style={{ transform: isMobile ? 'none' : `perspective(1000px) rotateY(${(1 - testimonialScrollProgress) * 15}deg) scale(${0.97 + (testimonialScrollProgress * 0.03)})`, transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+                    <div className="testimonial-left-panel">
+                      <div>
+                        <div className="author-name-v2">{t.name}</div>
+                        <blockquote className="testimonial-quote-v2">{t.quote}</blockquote>
+                      </div>
+                      <div className="testimonial-metrics-grid">
+                        <div className="metric-col">
+                          <strong>{t.metricVal1}</strong>
+                          <span>{t.metricLbl1}</span>
+                        </div>
+                        <div className="metric-col">
+                          <strong>{t.metricVal2}</strong>
+                          <span>{t.metricLbl2}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="testimonial-right-panel">
+                      <div className="creator-photo-placeholder" style={{ backgroundColor: t.photoBg }}>
+                        <span className="photo-label">{t.role}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Row 2: Sliding Right */}
+            <div className="testimonial-marquee-row right">
+              <div className="testimonial-marquee-track">
+                {[...TESTIMONIALS].reverse().map((t, idx) => (
+                  <div key={`right-1-${idx}`} className={`testimonial-card-v2 ${t.theme}`} style={{ transform: isMobile ? 'none' : `perspective(1000px) rotateY(${(1 - testimonialScrollProgress) * -15}deg) scale(${0.97 + (testimonialScrollProgress * 0.03)})`, transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+                    <div className="testimonial-left-panel">
+                      <div>
+                        <div className="author-name-v2">{t.name}</div>
+                        <blockquote className="testimonial-quote-v2">{t.quote}</blockquote>
+                      </div>
+                      <div className="testimonial-metrics-grid">
+                        <div className="metric-col">
+                          <strong>{t.metricVal1}</strong>
+                          <span>{t.metricLbl1}</span>
+                        </div>
+                        <div className="metric-col">
+                          <strong>{t.metricVal2}</strong>
+                          <span>{t.metricLbl2}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="testimonial-right-panel">
+                      <div className="creator-photo-placeholder" style={{ backgroundColor: t.photoBg }}>
+                        <span className="photo-label">{t.role}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {[...TESTIMONIALS].reverse().map((t, idx) => (
+                  <div key={`right-2-${idx}`} className={`testimonial-card-v2 ${t.theme}`} style={{ transform: isMobile ? 'none' : `perspective(1000px) rotateY(${(1 - testimonialScrollProgress) * -15}deg) scale(${0.97 + (testimonialScrollProgress * 0.03)})`, transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+                    <div className="testimonial-left-panel">
+                      <div>
+                        <div className="author-name-v2">{t.name}</div>
+                        <blockquote className="testimonial-quote-v2">{t.quote}</blockquote>
+                      </div>
+                      <div className="testimonial-metrics-grid">
+                        <div className="metric-col">
+                          <strong>{t.metricVal1}</strong>
+                          <span>{t.metricLbl1}</span>
+                        </div>
+                        <div className="metric-col">
+                          <strong>{t.metricVal2}</strong>
+                          <span>{t.metricLbl2}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="testimonial-right-panel">
+                      <div className="creator-photo-placeholder" style={{ backgroundColor: t.photoBg }}>
+                        <span className="photo-label">{t.role}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── FAQ SECTION ─────────────────────────────────────── */}
+        <FAQ />
+
+        {/* ── FINAL CTA SECTION ────────────────────────────────── */}
+        <section className="final" id="join">
+          <div className="wrap reveal">
+            <div className="final-centered-card">
+              <div className="final-ambient-glow" />
+
+              <h2>
+                Make something <br />
+                <em>worth talking about.</em>
               </h2>
-              <p className="spotlight-sub">
-                Discover and collaborate on creative briefs across fashion, lifestyle, technology and more.
+
+              <p className="final-subtext">
+                Join a trusted ecosystem handling verified Indian creators and high-growth brand campaigns in one automated platform.
               </p>
-            </div>
 
-            <div className="spotlight-header-right">
-              <div className="spark-circle-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z" fill="#E55B2B" />
-                </svg>
+              <div className="final-actions-row">
+                <button className="final-primary-btn" onClick={() => nav('/register?role=creator')}>
+                  <span>Join as Creator</span>
+                  <ArrowRight size={16} />
+                </button>
+                <button className="final-secondary-btn" onClick={() => nav('/register?role=brand')}>
+                  <span>Connect as Brand</span>
+                </button>
               </div>
-              <div className="spark-text">
-                Real briefs. Real creators.<br />Real impact.
+
+              <div className="final-trust-bar">
+                <div className="trust-item">
+                  <strong>{stats.displayVerifiedCreators}</strong>
+                  <span>Verified Creators</span>
+                </div>
+                <div className="trust-divider" />
+                <div className="trust-item">
+                  <strong>{stats.displayCampaignValue}</strong>
+                  <span>Campaign Value</span>
+                </div>
+                <div className="trust-divider" />
+                <div className="trust-item">
+                  <strong>{stats.displayMatchAccuracy}</strong>
+                  <span>Match Accuracy</span>
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Cards Grid Split Layout */}
-          <div className="spotlight-cards-grid">
-
-            {/* Left Tall Card: FASHION */}
-            <div className="spotlight-card card-fashion reveal">
-              <div className="card-top-tag">
-                <span className="pill-tag tag-fashion">FASHION • OPEN</span>
-              </div>
-
-              {/* Inner White Creator Match Card */}
-              <div className="fashion-inner-card">
-                <div className="match-row">
-                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80" alt="CreatoKite fashion creator Ananya Sharma" width="40" height="40" className="match-avatar" />
-                  <div className="match-info">
-                    <div className="match-name">Ananya Sharma</div>
-                    <div className="match-niche">Fashion & Styling</div>
-                  </div>
-                  <span className="match-score-pill">95% Match</span>
-                </div>
-
-                <div className="match-row">
-                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80" alt="CreatoKite creative director Kabir Mehta" width="40" height="40" className="match-avatar" />
-                  <div className="match-info">
-                    <div className="match-name">Kabir Mehta</div>
-                    <div className="match-niche">Creative Direction</div>
-                  </div>
-                  <span className="match-score-pill">93% Match</span>
-                </div>
-
-                <div className="match-row">
-                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80" alt="CreatoKite editorial photographer Riya Sen" width="40" height="40" className="match-avatar" />
-                  <div className="match-info">
-                    <div className="match-name">Riya Sen</div>
-                    <div className="match-niche">Editorial Photography</div>
-                  </div>
-                  <span className="match-score-pill">91% Match</span>
-                </div>
-              </div>
-
-              {/* Bottom Content & Graphic */}
-              <div className="fashion-card-bottom">
-                <div className="fashion-bottom-left">
-                  <div className="action-circle-btn" onClick={() => nav('/register?role=creator')}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="7" y1="17" x2="17" y2="7"></line>
-                      <polyline points="7 7 17 7 17 17"></polyline>
-                    </svg>
-                  </div>
-                  <h3 className="card-heading">Rework the everyday.</h3>
-                  <p className="card-studio-sub">North Studio • 12 creators</p>
-                </div>
-
-                <div className="fashion-bottom-graphic">
-                  <img src="/assets/campaign_arch_3d.jpg" alt="CreatoKite fashion campaign brief creative visual" loading="lazy" className="arch-graphic-img" />
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column Stack (Lifestyle + Technology) */}
-            <div className="spotlight-right-column">
-
-              {/* Top-Right Card: LIFESTYLE */}
-              <div className="spotlight-card card-lifestyle reveal">
-                <div className="lifestyle-top-row">
-                  <span className="pill-tag tag-lifestyle">LIFESTYLE • NEW</span>
-
-                  {/* Engagement Bar inside */}
-                  <div className="lifestyle-bar-wrapper">
-                    <div className="bar-track">
-                      <div className="bar-fill" style={{ width: '82%' }}></div>
-                    </div>
-                    <div className="bar-text-row">
-                      <span>Engagement</span>
-                      <strong>82%</strong>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="lifestyle-main-content">
-                  <div className="content-text-left">
-                    <div className="icon-circle sun-icon-bg">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E55B2B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                      </svg>
-                    </div>
-                    <h3 className="card-heading">Slow mornings.</h3>
-                    <p className="card-studio-sub">Good Ground • 8 creators</p>
-                  </div>
-
-                  <div className="lifestyle-graphic-right">
-                    <img src="/assets/campaign_lifestyle_mug.jpg" alt="CreatoKite lifestyle mug product collaboration" loading="lazy" className="mug-graphic-img" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom-Right Card: TECHNOLOGY */}
-              <div className="spotlight-card card-technology reveal">
-                <div className="tech-top-row">
-                  <span className="pill-tag tag-tech">TECHNOLOGY • OPEN</span>
-
-                  {/* Filter tags */}
-                  <div className="tech-tag-filters">
-                    <span className="filter-pill purple-pill">✦ AI Match</span>
-                    <span className="filter-pill white-pill">Tech</span>
-                    <span className="filter-pill white-pill">Reviews</span>
-                  </div>
-                </div>
-
-                <div className="tech-main-content">
-                  <div className="content-text-left">
-                    <div className="icon-circle bolt-icon-bg">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                      </svg>
-                    </div>
-                    <h3 className="card-heading">Future, in your hands.</h3>
-                    <p className="card-studio-sub">Mono Labs • 15 creators</p>
-                  </div>
-
-                  <div className="tech-graphic-right">
-                    <img src="/assets/campaign_purple_glass.jpg" alt="CreatoKite technology 3D glass product review campaign" loading="lazy" className="glass-graphic-img" />
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ── MARQUEE DIVIDER 2 ───────────────────────────────── */}
-      <div className="marquee">
-        <div className="marquee-track">
-          <span>FASHION <KiteIcon /> BEAUTY <KiteIcon /> TECHNOLOGY <KiteIcon /> LIFESTYLE <KiteIcon /> GAMING <KiteIcon /> FOOD <KiteIcon /> TRAVEL <KiteIcon /> ART <KiteIcon /> FASHION <KiteIcon /> BEAUTY <KiteIcon /> TECHNOLOGY <KiteIcon /> LIFESTYLE <KiteIcon /> GAMING <KiteIcon /> FOOD <KiteIcon /> TRAVEL <KiteIcon /> ART <KiteIcon /></span>
-          <span>FASHION <KiteIcon /> BEAUTY <KiteIcon /> TECHNOLOGY <KiteIcon /> LIFESTYLE <KiteIcon /> GAMING <KiteIcon /> FOOD <KiteIcon /> TRAVEL <KiteIcon /> ART <KiteIcon /> FASHION <KiteIcon /> BEAUTY <KiteIcon /> TECHNOLOGY <KiteIcon /> LIFESTYLE <KiteIcon /> GAMING <KiteIcon /> FOOD <KiteIcon /> TRAVEL <KiteIcon /> ART <KiteIcon /></span>
-        </div>
-      </div>
-
-      {/* ── STATS BLOCK (REDESIGNED CARDS) ───────────────────── */}
-      <section className="stats-section" id="impact-stats">
-        <div className="wrap">
-          <div className="stats-cards-grid reveal">
-
-            {/* Card 1: CREATORS */}
-            <div className="stat-card">
-              <div className="stat-icon-wrapper">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E55B2B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-              </div>
-
-              <div className="stat-val">{stats.displayCreators}</div>
-              <div className="stat-divider-line"></div>
-
-              <div className="stat-label">CREATORS</div>
-              <p className="stat-sub">Verified creators onboarded</p>
-
-              {/* Bottom Graphic: Soft Wave Curve */}
-              <div className="stat-bg-graphic graphic-wave">
-                <svg viewBox="0 0 240 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M0 45 C 50 65 100 25 180 55 C 210 65 230 40 240 30 L 240 70 L 0 70 Z" fill="url(#stat-wave-grad)" />
-                  <path d="M0 45 C 50 65 100 25 180 55 C 210 65 230 40 240 30" stroke="#E55B2B" strokeWidth="1.2" strokeOpacity="0.3" fill="none" />
-                  <defs>
-                    <linearGradient id="stat-wave-grad" x1="0" y1="30" x2="0" y2="70" gradientUnits="userSpaceOnUse">
-                      <stop stopColor="#E55B2B" stopOpacity="0.2" />
-                      <stop offset="1" stopColor="#E55B2B" stopOpacity="0.02" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-            </div>
-
-            {/* Card 2: BRANDS */}
-            <div className="stat-card">
-              <div className="stat-icon-wrapper">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E55B2B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 21h18M3 7v14M21 7v14M6 11h4M6 15h4M14 11h4M14 15h4M9 3l3-2 3 2"></path>
-                </svg>
-              </div>
-
-              <div className="stat-val">{stats.displayBrands}</div>
-              <div className="stat-divider-line"></div>
-
-              <div className="stat-label">BRANDS</div>
-              <p className="stat-sub">Active brands & agency partners</p>
-
-              {/* Bottom Graphic: Rising Bar Chart Columns */}
-              <div className="stat-bg-graphic graphic-bars">
-                <div className="bar-col bar-1"></div>
-                <div className="bar-col bar-2"></div>
-                <div className="bar-col bar-3"></div>
-                <div className="bar-col bar-4"></div>
-                <div className="bar-col bar-5"></div>
-              </div>
-            </div>
-
-            {/* Card 3: CAMPAIGNS */}
-            <div className="stat-card">
-              <div className="stat-icon-wrapper">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E55B2B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                </svg>
-              </div>
-
-              <div className="stat-val">{stats.displayCampaigns}</div>
-              <div className="stat-divider-line"></div>
-
-              <div className="stat-label">CAMPAIGNS</div>
-              <p className="stat-sub">Successful campaigns launched</p>
-
-              {/* Bottom Graphic: Dual Smooth Sine Lines */}
-              <div className="stat-bg-graphic graphic-lines">
-                <svg viewBox="0 0 240 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M0 50 Q 60 10 120 40 T 240 20" stroke="#E55B2B" strokeWidth="1.5" strokeOpacity="0.45" fill="none" />
-                  <path d="M0 35 Q 70 55 140 25 T 240 45" stroke="#E55B2B" strokeWidth="1" strokeOpacity="0.25" fill="none" />
-                </svg>
-              </div>
-            </div>
-
-            {/* Card 4: AVG ROI */}
-            <div className="stat-card">
-              <div className="stat-icon-wrapper">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E55B2B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                  <polyline points="17 6 23 6 23 12"></polyline>
-                </svg>
-              </div>
-
-              <div className="stat-val">320%</div>
-              <div className="stat-divider-line"></div>
-
-              <div className="stat-label">AVG ROI</div>
-              <p className="stat-sub">Average return on investment</p>
-
-              {/* Bottom Graphic: Growth Exponential Line + Gradient Area */}
-              <div className="stat-bg-graphic graphic-growth">
-                <svg viewBox="0 0 240 65" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M 0 60 Q 120 55 230 10 L 230 65 L 0 65 Z" fill="url(#roi-growth-grad)" />
-                  <path d="M 0 60 Q 120 55 230 10" stroke="#E55B2B" strokeWidth="2" strokeLinecap="round" fill="none" />
-                  <circle cx="230" cy="10" r="4.5" fill="#E55B2B" />
-                  <circle cx="230" cy="10" r="8" fill="#E55B2B" fillOpacity="0.25" />
-                  <defs>
-                    <linearGradient id="roi-growth-grad" x1="0" y1="10" x2="0" y2="65" gradientUnits="userSpaceOnUse">
-                      <stop stopColor="#E55B2B" stopOpacity="0.2" />
-                      <stop offset="1" stopColor="#E55B2B" stopOpacity="0.02" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIALS SECTION ────────────────────────────── */}
-      <section className="testimonials-section" id="testimonials">
-        <div className="wrap">
-          <div className="eyebrow-container reveal">
-            <span className="eyebrow-line"></span>
-            <span className="eyebrow-text">WHAT PEOPLE SAY</span>
-          </div>
-        </div>
-        <div className="testimonial-marquee-container">
-          {/* Row 1: Sliding Left */}
-          <div className="testimonial-marquee-row left">
-            <div className="testimonial-marquee-track">
-              {TESTIMONIALS.map((t, idx) => (
-                <div key={`left-1-${idx}`} className={`testimonial-card-v2 ${t.theme}`} style={{ transform: isMobile ? 'none' : `perspective(1000px) rotateY(${(1 - testimonialScrollProgress) * 15}deg) scale(${0.97 + (testimonialScrollProgress * 0.03)})`, transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                  <div className="testimonial-left-panel">
-                    <div>
-                      <div className="author-name-v2">{t.name}</div>
-                      <blockquote className="testimonial-quote-v2">{t.quote}</blockquote>
-                    </div>
-                    <div className="testimonial-metrics-grid">
-                      <div className="metric-col">
-                        <strong>{t.metricVal1}</strong>
-                        <span>{t.metricLbl1}</span>
-                      </div>
-                      <div className="metric-col">
-                        <strong>{t.metricVal2}</strong>
-                        <span>{t.metricLbl2}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="testimonial-right-panel">
-                    <div className="creator-photo-placeholder" style={{ backgroundColor: t.photoBg }}>
-                      <span className="photo-label">{t.role}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {TESTIMONIALS.map((t, idx) => (
-                <div key={`left-2-${idx}`} className={`testimonial-card-v2 ${t.theme}`} style={{ transform: isMobile ? 'none' : `perspective(1000px) rotateY(${(1 - testimonialScrollProgress) * 15}deg) scale(${0.97 + (testimonialScrollProgress * 0.03)})`, transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                  <div className="testimonial-left-panel">
-                    <div>
-                      <div className="author-name-v2">{t.name}</div>
-                      <blockquote className="testimonial-quote-v2">{t.quote}</blockquote>
-                    </div>
-                    <div className="testimonial-metrics-grid">
-                      <div className="metric-col">
-                        <strong>{t.metricVal1}</strong>
-                        <span>{t.metricLbl1}</span>
-                      </div>
-                      <div className="metric-col">
-                        <strong>{t.metricVal2}</strong>
-                        <span>{t.metricLbl2}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="testimonial-right-panel">
-                    <div className="creator-photo-placeholder" style={{ backgroundColor: t.photoBg }}>
-                      <span className="photo-label">{t.role}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Row 2: Sliding Right */}
-          <div className="testimonial-marquee-row right">
-            <div className="testimonial-marquee-track">
-              {[...TESTIMONIALS].reverse().map((t, idx) => (
-                <div key={`right-1-${idx}`} className={`testimonial-card-v2 ${t.theme}`} style={{ transform: isMobile ? 'none' : `perspective(1000px) rotateY(${(1 - testimonialScrollProgress) * -15}deg) scale(${0.97 + (testimonialScrollProgress * 0.03)})`, transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                  <div className="testimonial-left-panel">
-                    <div>
-                      <div className="author-name-v2">{t.name}</div>
-                      <blockquote className="testimonial-quote-v2">{t.quote}</blockquote>
-                    </div>
-                    <div className="testimonial-metrics-grid">
-                      <div className="metric-col">
-                        <strong>{t.metricVal1}</strong>
-                        <span>{t.metricLbl1}</span>
-                      </div>
-                      <div className="metric-col">
-                        <strong>{t.metricVal2}</strong>
-                        <span>{t.metricLbl2}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="testimonial-right-panel">
-                    <div className="creator-photo-placeholder" style={{ backgroundColor: t.photoBg }}>
-                      <span className="photo-label">{t.role}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {[...TESTIMONIALS].reverse().map((t, idx) => (
-                <div key={`right-2-${idx}`} className={`testimonial-card-v2 ${t.theme}`} style={{ transform: isMobile ? 'none' : `perspective(1000px) rotateY(${(1 - testimonialScrollProgress) * -15}deg) scale(${0.97 + (testimonialScrollProgress * 0.03)})`, transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                  <div className="testimonial-left-panel">
-                    <div>
-                      <div className="author-name-v2">{t.name}</div>
-                      <blockquote className="testimonial-quote-v2">{t.quote}</blockquote>
-                    </div>
-                    <div className="testimonial-metrics-grid">
-                      <div className="metric-col">
-                        <strong>{t.metricVal1}</strong>
-                        <span>{t.metricLbl1}</span>
-                      </div>
-                      <div className="metric-col">
-                        <strong>{t.metricVal2}</strong>
-                        <span>{t.metricLbl2}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="testimonial-right-panel">
-                    <div className="creator-photo-placeholder" style={{ backgroundColor: t.photoBg }}>
-                      <span className="photo-label">{t.role}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQ SECTION ─────────────────────────────────────── */}
-      <FAQ />
-
-      {/* ── FINAL CTA SECTION ────────────────────────────────── */}
-      <section className="final" id="join">
-        <div className="wrap reveal">
-          <div className="final-centered-card">
-            <div className="final-ambient-glow" />
-
-            <h2>
-              Make something <br />
-              <em>worth talking about.</em>
-            </h2>
-
-            <p className="final-subtext">
-              Join a trusted ecosystem handling verified Indian creators and high-growth brand campaigns in one automated platform.
-            </p>
-
-            <div className="final-actions-row">
-              <button className="final-primary-btn" onClick={() => nav('/register?role=creator')}>
-                <span>Join as Creator</span>
-                <ArrowRight size={16} />
-              </button>
-              <button className="final-secondary-btn" onClick={() => nav('/register?role=brand')}>
-                <span>Connect as Brand</span>
-              </button>
-            </div>
-
-            <div className="final-trust-bar">
-              <div className="trust-item">
-                <strong>{stats.displayVerifiedCreators}</strong>
-                <span>Verified Creators</span>
-              </div>
-              <div className="trust-divider" />
-              <div className="trust-item">
-                <strong>{stats.displayCampaignValue}</strong>
-                <span>Campaign Value</span>
-              </div>
-              <div className="trust-divider" />
-              <div className="trust-item">
-                <strong>{stats.displayMatchAccuracy}</strong>
-                <span>Match Accuracy</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
       </main>
 
       {/* ── FOOTER SECTION ───────────────────────────────────── */}
@@ -3971,7 +3971,8 @@ export default function Landing() {
           }
           .hero { min-height: auto; padding-top: 120px; padding-bottom: 60px; }
           .hero-grid { grid-template-columns: 1fr; gap: 40px; }
-          .hero-art-container { display: none !important; }
+          .hero-art-container { height: 440px; max-width: 100%; margin: 0 auto; overflow: hidden; }
+          .hero-cards-wrapper { transform: scale(0.85); transform-origin: center center; }
 
           .spotlight-cards-grid {
             grid-template-columns: 1fr !important;
@@ -4017,7 +4018,33 @@ export default function Landing() {
           
           .hero { padding-top: 90px; padding-bottom: 20px; overflow: hidden; }
           .hero-art-container {
-            display: none !important;
+            height: 360px !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            margin: 15px auto 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            position: relative !important;
+            overflow: visible !important;
+          }
+          .hero-cards-wrapper {
+            position: absolute !important;
+            left: 50% !important;
+            top: 52% !important;
+            transform: translate(-50%, -50%) scale(0.56) !important;
+            transform-origin: center center !important;
+            margin: 0 !important;
+            width: 520px !important;
+            height: 480px !important;
+          }
+          .hero-blob-backdrop {
+            position: absolute !important;
+            left: 50% !important;
+            top: 50% !important;
+            transform: translate(-50%, -50%) scale(0.80) !important;
+            width: 100% !important;
+            height: 100% !important;
           }
           
           .hero-actions {
@@ -4047,6 +4074,16 @@ export default function Landing() {
           #landing-page-root .hero h1.hero-title-serif em {
             font-weight: 700 !important;
           }
+
+        @media(max-width: 440px){
+          .hero-art-container {
+            height: 310px !important;
+          }
+          .hero-cards-wrapper {
+            transform: translate(-50%, -50%) scale(0.48) !important;
+            top: 52% !important;
+          }
+        }
 
           /* How It Works Steps on Mobile */
           .step {

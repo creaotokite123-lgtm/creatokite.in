@@ -302,7 +302,7 @@ export default function Login() {
             <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Creator" className="login-avatar-img" />
           </div>
           <span className="login-social-proof-text">
-            Trusted by <strong className="login-highlight-orange">12,000+</strong> brands & creators across India
+            Trusted by <strong className="login-highlight-orange">many</strong> brands & creators across India
           </span>
         </div>
       </div>

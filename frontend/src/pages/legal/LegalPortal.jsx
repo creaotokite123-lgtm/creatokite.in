@@ -395,7 +395,7 @@ export default function LegalPortal({ defaultTab = 'privacy' }) {
                 </p>
                 <div style={{ background: '#FAF7F2', padding: 20, borderRadius: 16, border: '1px solid rgba(17,24,39,0.08)' }}>
                   <div><strong>CreatoKite Data Protection Office</strong></div>
-                  <div style={{ marginTop: 4 }}>Email: <a href="mailto:creaotokite123@gmail.com" style={{ color: '#E55B2B', fontWeight: 700 }}>creaotokite123@gmail.com</a> / <a href="mailto:privacy@creatokite.in" style={{ color: '#E55B2B', fontWeight: 700 }}>privacy@creatokite.in</a></div>
+                  <div style={{ marginTop: 4 }}>Email: <a href="mailto:creaotokite123@gmail.com" style={{ color: '#E55B2B', fontWeight: 700 }}>creaotokite123@gmail.com</a> </div>
                 </div>
               </div>
             </div>
@@ -491,7 +491,7 @@ export default function LegalPortal({ defaultTab = 'privacy' }) {
                 </p>
                 <div style={{ background: '#FAF7F2', padding: 20, borderRadius: 16, border: '1px solid rgba(17,24,39,0.08)' }}>
                   <div><strong>CreatoKite Security &amp; Response Team</strong></div>
-                  <div style={{ marginTop: 4 }}>Security Email: <a href="mailto:security@creatokite.in" style={{ color: '#E55B2B', fontWeight: 700 }}>security@creatokite.in</a></div>
+                  <div style={{ marginTop: 4 }}>Security Email: <a href="mailto:creaotokite123@gmail.com" style={{ color: '#E55B2B', fontWeight: 700 }}>creaotokite123@gmail.com</a></div>
                   <div style={{ marginTop: 2, fontSize: 12, color: '#6B7280' }}>Our security engineering team acknowledges reports within 24 hours.</div>
                 </div>
               </div>
