@@ -4,6 +4,7 @@ const { auth, teamOrAdmin, adminOnly } = require('../middleware/auth');
 const router = express.Router();
 router.use(auth);
 
+
 router.get('/', async (req,res) => {
   try {
     const {category,search,page=1,limit=20} = req.query;
